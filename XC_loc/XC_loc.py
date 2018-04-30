@@ -55,85 +55,85 @@ def latlon2xy(loc):
 	return x, y
 
 
-def retrieve_neighbors(index_center, df, dx, dt):
-	from pandas import to_datetime
-	neigborhood = []
+# def retrieve_neighbors(index_center, df, dx, dt):
+# 	from pandas import to_datetime
+# 	neigborhood = []
 
-	center_point = df.loc[index_center]
+# 	center_point = df.loc[index_center]
 
-	# filter by time 
-	min_time = center_point['date_time'] - timedelta(minutes=dt)
-	max_time = center_point['date_time'] + timedelta(minutes=dt)
-	df = df[df['date_time'] >= to_datetime(min_time.strftime('%Y-%m-%d %H:%M:%S'))]
-	df = df[df['date_time'] <= to_datetime(max_time.strftime('%Y-%m-%d %H:%M:%S'))]
+# 	# filter by time 
+# 	min_time = center_point['date_time'] - timedelta(minutes=dt)
+# 	max_time = center_point['date_time'] + timedelta(minutes=dt)
+# 	df = df[df['date_time'] >= to_datetime(min_time.strftime('%Y-%m-%d %H:%M:%S'))]
+# 	df = df[df['date_time'] <= to_datetime(max_time.strftime('%Y-%m-%d %H:%M:%S'))]
 
-	# filter by distance
-	for index, point in df.iterrows():
-		if index != index_center:
-			distance = 111.1*locations2degrees(center_point['latitude'],center_point['longitude'],
-												point['latitude'],point['longitude'])
-			if distance <= dx:
-				neigborhood.append(index)
+# 	# filter by distance
+# 	for index, point in df.iterrows():
+# 		if index != index_center:
+# 			distance = 111.1*locations2degrees(center_point['latitude'],center_point['longitude'],
+# 												point['latitude'],point['longitude'])
+# 			if distance <= dx:
+# 				neigborhood.append(index)
 
-	return neigborhood
+# 	return neigborhood
 
 
-def st_dbscan(event_list, dx=5, dt=60, num=4):
-	"""
-	Python st-dbscan implementation.
-	INPUTS:
-		df={o1,o2,...,on} Set of objects
-		dx = Maximum geographical coordinate (spatial) distance
-		value
-		dt = Maximum non-spatial distance value
-		num = Minimun number of points within Eps1 and Eps2 distance
-	OUTPUT:
-		C = {c1,c2,...,ck} Set of clusters
+# def st_dbscan(event_list, dx=5, dt=60, num=4):
+# 	"""
+# 	Python st-dbscan implementation.
+# 	INPUTS:
+# 		df={o1,o2,...,on} Set of objects
+# 		dx = Maximum geographical coordinate (spatial) distance
+# 		value
+# 		dt = Maximum non-spatial distance value
+# 		num = Minimun number of points within Eps1 and Eps2 distance
+# 	OUTPUT:
+# 		C = {c1,c2,...,ck} Set of clusters
 
-	modified from https://github.com/eubr-bigsea/py-st-dbscan
-	"""
-	from pandas import DataFrame, to_datetime
+# 	modified from https://github.com/eubr-bigsea/py-st-dbscan
+# 	"""
+# 	from pandas import DataFrame, to_datetime
 
-	cluster_label = 0
-	noise = -1
-	unmarked = 777777
-	stack = []
+# 	cluster_label = 0
+# 	noise = -1
+# 	unmarked = 777777
+# 	stack = []
 
-	df = DataFrame([[l.starttime.strftime('%Y-%m-%d %H:%M:%S'),l.latitude,l.longitude,unmarked] for l in event_list.events],
-						columns=['date_time','latitude','longitude','cluster'])
-	df['date_time'] = to_datetime(df['date_time'])
-	# initialize each point with unmarked
-	for index, point in df.iterrows():
-		if df.loc[index]['cluster'] == unmarked:
-			neighborhood = retrieve_neighbors(index, df, dx, dt)
+# 	df = DataFrame([[l.starttime.strftime('%Y-%m-%d %H:%M:%S'),l.latitude,l.longitude,unmarked] for l in event_list.events],
+# 						columns=['date_time','latitude','longitude','cluster'])
+# 	df['date_time'] = to_datetime(df['date_time'])
+# 	# initialize each point with unmarked
+# 	for index, point in df.iterrows():
+# 		if df.loc[index]['cluster'] == unmarked:
+# 			neighborhood = retrieve_neighbors(index, df, dx, dt)
 
-			if len(neighborhood) < num:
-				df.at[index, 'cluster'] = noise
-			else:  # found a core point
-				cluster_label += 1
-				# assign a label to core point
-				df.at[index, 'cluster'] = cluster_label
+# 			if len(neighborhood) < num:
+# 				df.at[index, 'cluster'] = noise
+# 			else:  # found a core point
+# 				cluster_label += 1
+# 				# assign a label to core point
+# 				df.at[index, 'cluster'] = cluster_label
 
-				# assign core's label to its neighborhood
-				for neig_index in neighborhood:
-					df.at[neig_index, 'cluster'] = cluster_label
-					stack.append(neig_index)  # append neighborhood to stack
+# 				# assign core's label to its neighborhood
+# 				for neig_index in neighborhood:
+# 					df.at[neig_index, 'cluster'] = cluster_label
+# 					stack.append(neig_index)  # append neighborhood to stack
 
-				# find new neighbors from core point neighborhood
-				while len(stack) > 0:
-					current_point_index = stack.pop()
-					new_neighborhood = retrieve_neighbors(current_point_index, df, dx,dt)
+# 				# find new neighbors from core point neighborhood
+# 				while len(stack) > 0:
+# 					current_point_index = stack.pop()
+# 					new_neighborhood = retrieve_neighbors(current_point_index, df, dx,dt)
 
-				    # current_point is a new core
-					if len(new_neighborhood) >= num:
-						for neig_index in new_neighborhood:
-							neig_cluster = df.loc[neig_index]['cluster']
-							if all([neig_cluster != noise, neig_cluster == unmarked]):
-								# TODO: verify cluster average
-								# before add new point
-								df.at[neig_index, 'cluster'] = cluster_label
-								stack.append(neig_index)
-	return df
+# 				    # current_point is a new core
+# 					if len(new_neighborhood) >= num:
+# 						for neig_index in new_neighborhood:
+# 							neig_cluster = df.loc[neig_index]['cluster']
+# 							if all([neig_cluster != noise, neig_cluster == unmarked]):
+# 								# TODO: verify cluster average
+# 								# before add new point
+# 								df.at[neig_index, 'cluster'] = cluster_label
+# 								stack.append(neig_index)
+# 	return df
 
 
 def check_edgeproblems(edge_control,st_tmp):
@@ -619,15 +619,20 @@ class event_list(object):
 		else:
 			return event_list(events)
 
-	def cluster(self,eps=3,num_events=4):
+	# def cluster(self,eps=3,num_events=4):
+	# 	det=detections(self.events)
+	# 	det.cluster(eps=3,num_events=4)
+	# 	return det
+
+	def cluster(self,dx=10,dt=120,num_events=4):
 		det=detections(self.events)
-		det.cluster(eps=3,num_events=4)
+		det.st_cluster(dx=10,dt=120,num_events=4)
 		return det
 
-	def cluster_spacetime(self,dx=10,dt=120,num_events=4):
-		det=detections(self.events)
-		det.cluster_spacetime(dx=10,dt=120,num_events=4)
-		return det
+# def cluster_spacetime(self,dx=10,dt=120,num_events=4):
+	# 	det=detections(self.events)
+	# 	det.cluster_spacetime(dx=10,dt=120,num_events=4)
+	# 	return det
 
 	def __add__(self,other):
 		return event_list(self.events+other.events)
@@ -673,35 +678,79 @@ class detections(object):
 		   									  max_vertical_scatter=max_vertical_scatter,min_num_channels=min_num_channels,max_num_channels=max_num_channels))
 		return NEW
 
-	def cluster_spacetime(self,dx=10,dt=120,num_events=4):
-		""" Cluster locations in the 'detections' event_list using 'ST-DBSCAN'. 
-		    dx          - the maximum horizontal distance in km
-		    dt 		    - maximum time separation in minutes
-		    num_events  - number of events required to meet the distance criteria
+	# def cluster_spacetime(self,dx=10,dt=120,num_events=4):
+	# 	""" Cluster locations in the 'detections' event_list using 'ST-DBSCAN'. 
+	# 	    dx          - the maximum horizontal distance in km
+	# 	    dt 		    - maximum time separation in minutes
+	# 	    num_events  - number of events required to meet the distance criteria
 
-		    The method leaves the 'detections' event_list untouched, but adds additional 
-		    event_list properties in place: 
-		    clustered  - events who all meet the criteria
-		    noise      - events that don't meet either criteria above
-	    """
+	# 	    The method leaves the 'detections' event_list untouched, but adds additional 
+	# 	    event_list properties in place: 
+	# 	    clustered  - events who all meet the criteria
+	# 	    noise      - events that don't meet either criteria above
+	#     """
 
-		df = st_dbscan(self.detections, dx=dx, dt=dt, num=num_events)
-		cluster_inds=df[df['cluster']>-1].index
-		print('{:.0f} events found in {:.0f} clusters.'.format(len(cluster_inds),df['cluster'].values.max()))
-		tmp=[]
-		for ind in cluster_inds:
-			tmp.append(self.detections.events[ind])
-		self.clustered=event_list(tmp)
+	# 	df = st_dbscan(self.detections, dx=dx, dt=dt, num=num_events)
+	# 	cluster_inds=df[df['cluster']>-1].index
+	# 	print('{:.0f} events found in {:.0f} clusters.'.format(len(cluster_inds),df['cluster'].values.max()))
+	# 	tmp=[]
+	# 	for ind in cluster_inds:
+	# 		tmp.append(self.detections.events[ind])
+	# 	self.clustered=event_list(tmp)
 
-		noise_inds=df[df['cluster']==-1].index
-		tmp=[]
-		for ind in noise_inds:
-			tmp.append(self.detections.events[ind])
-		self.noise=event_list(tmp)
+	# 	noise_inds=df[df['cluster']==-1].index
+	# 	tmp=[]
+	# 	for ind in noise_inds:
+	# 		tmp.append(self.detections.events[ind])
+	# 	self.noise=event_list(tmp)
 
-	def cluster(self,eps=3,num_events=4):
+	# def cluster(self,eps=3,num_events=4):
+	# 	""" Cluster locations in the 'detections' event_list using 'DBSCAN'. 
+	# 	    eps         - the maximum horizontal distance in km
+	# 	    num_events  - number of events required to meet the distance criteria
+
+	# 	    The method leaves the 'detections' event_list untouched, but adds additional 
+	# 	    event_list properties in place: 
+	# 	    core_clustered - events who all meet the criteria
+	# 	    edge_clustered - events within 'eps' distance of 'core_clustered' event, but
+	# 	                     don't themselves have num_events within 'eps' distance
+	# 	                     of them
+	# 	    noise          - events that don't meet either criteria above
+	# 	    all_clustered  - core_clustered + edge_clustered combined for convenience 
+	#     """
+
+	# 	from sklearn.cluster import DBSCAN
+	# 	x,y = latlon2xy(self)
+	# 	X   = np.array([x,y]).T
+	# 	db  = DBSCAN(eps=eps, min_samples=num_events).fit(X)
+
+	# 	all_detects=np.where(db.labels_>-1)[0]
+	# 	tmp=[]
+	# 	for ind in all_detects:
+	# 		tmp.append(self.detections.events[ind])
+	# 	self.all_clustered=event_list(tmp)
+
+	# 	tmp=[]
+	# 	for ind in db.core_sample_indices_:
+	# 		tmp.append(self.detections.events[ind])
+	# 	self.core_clustered=event_list(tmp)
+
+	# 	tmp=[]
+	# 	for ind in all_detects:
+	# 		if ind not in db.core_sample_indices_:
+	# 			tmp.append(self.detections.events[ind])
+	# 	self.edge_clustered=event_list(tmp)
+
+	# 	tmp=[]
+	# 	noise_inds=np.where(db.labels_==-1)[0]
+	# 	for ind in noise_inds:
+	# 		tmp.append(self.detections.events[ind])
+	# 	self.noise=event_list(tmp)
+
+	def cluster(self,dx=25,dt=None,num_events=4):
 		""" Cluster locations in the 'detections' event_list using 'DBSCAN'. 
-		    eps         - the maximum horizontal distance in km
+		    dx          - the maximum horizontal distance in km
+		    dt			- the maximum time difference between detections
 		    num_events  - number of events required to meet the distance criteria
 
 		    The method leaves the 'detections' event_list untouched, but adds additional 
@@ -715,9 +764,19 @@ class detections(object):
 	    """
 
 		from sklearn.cluster import DBSCAN
-		x,y=latlon2xy(self)
-		X=np.array([x,y]).T
-		db = DBSCAN(eps=eps, min_samples=num_events).fit(X)
+		x,y = latlon2xy(self)
+		
+		if not dt:
+			X   = np.array([x,y]).T
+		else:
+			# scale time to match distance
+			t   = self.detections.get_times()
+			dt  = np.array([(t0.datetime-t.min().datetime).total_seconds()/60. for t0 in t])
+			dt  = dt*(dx/np.float(dt))
+			# put distance and time together
+			X   = np.array([x,y,dt]).T
+
+		db  = DBSCAN(eps=dx, min_samples=num_events).fit(X)
 
 		all_detects=np.where(db.labels_>-1)[0]
 		tmp=[]
