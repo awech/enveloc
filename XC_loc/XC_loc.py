@@ -771,10 +771,10 @@ class detections(object):
 		else:
 			# scale time to match distance
 			t   = self.detections.get_times()
-			dt  = np.array([(t0.datetime-t.min().datetime).total_seconds()/60. for t0 in t])
-			dt  = dt*(dx/np.float(dt))
+			dtime  = np.array([(t0.datetime-t.min().datetime).total_seconds()/60. for t0 in t])
+			dtime  = dtime*(dx/np.float(dt))
 			# put distance and time together
-			X   = np.array([x,y,dt]).T
+			X   = np.array([x,y,dtime]).T
 
 		db  = DBSCAN(eps=dx, min_samples=num_events).fit(X)
 
