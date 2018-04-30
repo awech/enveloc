@@ -626,7 +626,7 @@ class event_list(object):
 
 	def cluster(self,dx=10,dt=120,num_events=4):
 		det=detections(self.events)
-		det.st_cluster(dx=10,dt=120,num_events=4)
+		det.cluster(dx=10,dt=120,num_events=4)
 		return det
 
 # def cluster_spacetime(self,dx=10,dt=120,num_events=4):
