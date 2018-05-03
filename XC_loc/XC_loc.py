@@ -5,9 +5,9 @@ from obspy.geodetics import locations2degrees
 import numpy as np
 import sys
 from copy import copy, deepcopy
-from XC_loc import xcorr_Tools
-from XC_loc import xloc_Tools
-from XC_loc import XC_plotting
+import xcorr_Tools
+import xloc_Tools
+import XC_plotting
 from itertools import combinations
 from obspy.geodetics.base import gps2dist_azimuth
 from datetime import timedelta
