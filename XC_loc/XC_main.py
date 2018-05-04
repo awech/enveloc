@@ -794,17 +794,16 @@ class XCOR(object):
 		self.output     = output
 		self.traces      = st
 		self.detrend     = detrend
-
 		if not tt_file:
 			import os
 			if not model_dir:
-				self._model_dir=os.path.dirname(xcorr_Tools.__file__)
+				self._model_dir=os.path.dirname(os.path.realpath(__file__))
 			else:
 				self._model_dir=model_dir
 			if not model:
 				print('Warning!  No model provided.')
 				print('Default model used. Maybe not ideal...')
-				self._model_file=os.path.dirname(xcorr_Tools.__file__)+'default_vel_model.tvel'
+				self._model_file=os.path.dirname(os.path.realpath(__file__))+'/default_vel_model.tvel'
 				print('Using '+self._model_file)
 			else:
 				self._model_file=model
