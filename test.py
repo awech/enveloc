@@ -1,4 +1,4 @@
-from XC_loc import utils, XC_loc
+from XC_loc import utils, XC_main
 from obspy.clients.fdsn import Client
 # from obspy.clients.earthworm import Client
 
@@ -33,7 +33,7 @@ st, env = utils.get_IRIS_data(sta_list,t1,t2,f1=1.0,f2=8.0,lowpass=0.2,client=cl
 
 # Example locating single window interactively (make sure to disable any matplotlib backend)
 # Click on envelope traces you want to remove from data and relocate
-XC   = XC_loc.XCOR(env)
+XC   = XC_main.XCOR(env)
 loc  = XC.locate()
 # now do the same but bootstrap to estimate location stability
 XC.bootstrap=20
@@ -42,20 +42,20 @@ loc  = XC.locate()
 
 
 # Example autolocating over sliding windows
-XC   = XC_loc.XCOR(env,raw_traces=st)
+XC   = XC_main.XCOR(env,raw_traces=st)
 loc  = XC.locate(window_length=25,step=10)
 
 
 
 # Example bootstrapping to estimate location stability:
-XC   = XC_loc.XCOR(env,raw_traces=st, bootstrap=20)
+XC   = XC_main.XCOR(env,raw_traces=st, bootstrap=20)
 loc = XC.locate(window_length=25,step=10)
 
 
 
 
 # Example using parallel processing:
-XC   = XC_loc.XCOR(env,raw_traces=st,visual=False,num_processors=10,output=3,bootstrap=20)
+XC   = XC_main.XCOR(env,raw_traces=st,visual=False,num_processors=10,output=3,bootstrap=20)
 loc  = XC.locate(window_length=25,step=10)
 
 
@@ -67,5 +67,5 @@ small=0.0005
 mygrid={ 'deps': np.arange(0.5,30+small,2),
 		 'lons': np.arange(-158.4,-157.9+small,0.04),
 		 'lats': np.arange(  56.7,  57.1+small,0.04)}
-XC   = XC_loc.XCOR(env,bootstrap=20,grid_size=mygrid)
+XC   = XC_main.XCOR(env,bootstrap=20,grid_size=mygrid)
 loc  = XC.locate()
