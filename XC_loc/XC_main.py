@@ -4,10 +4,9 @@ from obspy.taup import TauPyModel
 from obspy.geodetics import locations2degrees
 import numpy as np
 import sys
+import XC_loc.xcorr_Tools as xcorr_Tools
+import XC_loc.xloc_Tools as xloc_Tools
 from copy import copy, deepcopy
-from XC_loc import xcorr_Tools
-from XC_loc import xloc_Tools
-from XC_loc import XC_plotting
 from itertools import combinations
 from obspy.geodetics.base import gps2dist_azimuth
 from datetime import timedelta
@@ -232,6 +231,7 @@ def XC_locate(win,XC):
 		####################################################
 		""" Done with bootstrap loop. Plot & interact """
 		if XC.visual and XC._num_processors==1:
+			from XC_loc.XC_plotting import XC_plot
 			""" if map hasn't yet been made, make one """
 			if 'map' not in XC.__dict__:
 				from mpl_toolkits.basemap import Basemap					
@@ -252,7 +252,7 @@ def XC_locate(win,XC):
 			CCshift = np.arange(Nseis0*(Nseis0-1)/2)*(2*(XC._mlag+1)-1)-1 # index into cross-corrleation array
 			""" Call plotting routine. Return plot_opt variable to see if 
 			    we need to relocate """
-			plot_opt = XC_plotting.XC_plot(CCrm,XC,CC1,misfit,plot_loc)
+			plot_opt = XC_plot(CCrm,XC,CC1,misfit,plot_loc)
 			drop_key = plot_opt['krm']
 			""" relocate with some stations removed """
 			if plot_opt['relocate']:
