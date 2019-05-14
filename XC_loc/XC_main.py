@@ -81,6 +81,17 @@ def XC_locate(win,XC):
 			print('WARNING FROM XC_loc: too many traces with no data')
 			return location(starttime=win[0],endtime=win[1],channels=xloc_Tools.channel_list(st_tmp)) 	# return latitude, longitude, depth # return because these envelopes suck.
 
+	""" Remove traces with flagged gaps """
+	for tr in st_tmp:
+		if np.any(tr.data==XC._gap_value) and not XC._waveform_loc:
+			print('Gap in {} | Removing station...'.format(tr.id))
+			st_tmp.remove(tr)
+	if len(st_tmp) < XC.sta_min:
+		if XC.output > 0:
+			print('WARNING FROM XC_loc: too many traces with no data')
+			return location(starttime=win[0],endtime=win[1],channels=xloc_Tools.channel_list(st_tmp)) 	# return latitude, longitude, depth # return because these envelopes suck.
+
+
 	""" Remove traces with triggers within time window """
 	for tr in st_tmp:
 		if hasattr(tr,'triggers'):
@@ -195,8 +206,9 @@ def XC_locate(win,XC):
 			####################################################
 
 
-			""" Regrid if it is the last iteration and XC.regrid==True """
-			if XC.regrid and bstrap == np.arange(XC.bootstrap)[-1]:
+
+			""" Regrid if XC.regrid==True """
+			if XC.regrid:
 				tmp_lat, tmp_lon, tmp_dep = xloc_Tools.regridHypocenter(CCnew,XC,misfit)
 
 
@@ -777,7 +789,8 @@ class XCOR(object):
 		tt_file   	   - Path to a .npz file containing pre-calculated traveltimes for this station set
 						 on this grid. Calulated using save_traveltimes() method.
 		waveform_loc   - Boolean flag to optionally locate waveforms rather than envelopes. Default = False
-						 This flag exists to bypass some of the built in envelope quailty control					 
+						 This flag exists to bypass some of the built in envelope quailty control	
+		gap_value      - Value used to flag data gaps identified in preprocessing. Default = -123454321				 
 	"""
 
 	def __init__(self,st,model=None,grid_size=None,detrend=True,regrid=False,phase_types=['s','S'],
@@ -785,7 +798,7 @@ class XCOR(object):
 				 	     Cmin=0.5,Cmax=0.995,sta_min=3,dx_min=0.1,dt=3.0,bootstrap=1,
 				 	     bootstrap_prct=0.04,lookup_type='cubic',transform=None,dTmax_s=None,
 				 	     rd_freq=None,raw_traces=[],env_hp=[],edge_control=0.03,num_processors=1,
-						 tt_file=None,waveform_loc=False,model_dir=None):
+						 tt_file=None,waveform_loc=False,model_dir=None,gap_value=-123454321):
 
 		if output==True:
 			output = 1
@@ -899,6 +912,7 @@ class XCOR(object):
 		self._edge_control   = edge_control
 		self._num_processors = num_processors
 		self._waveform_loc   = waveform_loc
+		self._gap_value = gap_value
 
 
 	def __repr__(self):
