@@ -56,42 +56,19 @@ def get_data(sta_list,t1,t2,fill_value=0,client=None):
 	return st
 
 
-def match_sample_rate(st):
-	sr = min([tr.stats.sampling_rate for tr in st])
-
-	for tr in st:
-		if tr.stats.sampling_rate == 4 * sr:
-			tr.decimate(2)
-		if tr.stats.sampling_rate == 2 * sr:
-			tr.decimate(2)
-		if tr.stats.sampling_rate != sr:
-			tr.resample(sr)
-
-	if sr == 100:
-		st.decimate(2)
-		st.decimate(2)
-	if sr == 50:
-		st.decimate(2)
-	elif sr == 40:
-		st.decimate(2)
-
-	return st
-
-
 def make_env(st,lowpass=0.2):
 	from obspy.signal.filter import envelope
 
+	st.detrend('demean')
 	for tr in st:
-	    tr.data = envelope(tr.data)
+		tr.resample(25.0)
+		if tr.stats.npts % 2 ==1:
+			tr.trim(starttime=tr.stats.starttime,endtime=tr.stats.endtime+1/tr.stats.sampling_rate,pad=True,fill_value=0)
+		tr.data = envelope(tr.data)
+		tr.resample(5.0)
+		tr.resample(1.0)
+
 	st.filter('lowpass',freq=lowpass)
-
-	sr = st[0].stats.sampling_rate
-
-	if sr == 25:
-		st.decimate(5)
-	elif sr == 20:
-		st.decimate(2)
-		st.decimate(2)
 
 	return st
 
@@ -102,8 +79,9 @@ def get_IRIS_data(sta_list,t1,t2,f1=1.0,f2=8.0,lowpass=0.2,client=None):
 		client = Client('IRIS')
 	st = get_data(sta_list,t1,t2,client=client)
 	st = add_latlon(st,client=client)
-	st = match_sample_rate(st)
-	st.filter('bandpass',freqmin=f1,freqmax=f2)
+	st.detrend('demean')
+	st.taper(max_percentage=None,max_length=5)
+	st.filter('bandpass',freqmin=f1,freqmax=f2,corners=3,zerophase=True)
 	st = st.remove_response(output='DISP')
 	env = make_env(st.copy(),lowpass=lowpass)
 	st.trim(st[0].stats.starttime+dt,st[0].stats.endtime-dt)

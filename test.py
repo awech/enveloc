@@ -2,12 +2,9 @@ import XC_loc.utils as utils
 import XC_loc.XC_main as XC_main
 from obspy.clients.fdsn import Client
 
-# from obspy.clients.earthworm import Client
-
 ### get data & preprocess into envelopes ###
 ############################################
 client=Client('IRIS')
-# client=Client('pubavo1.wr.usgs.gov',16022)
 sta_list=['AV.ANON..EHZ','AV.ANPK..EHZ','AV.AZAC..EHZ','AV.ANNE..EHZ','AV.ANPB..EHZ','AV.ANNW..EHZ']
 t1 = '2017-03-10 13:39'
 t2 = '2017-03-10 13:44'
@@ -35,6 +32,11 @@ st, env = utils.get_IRIS_data(sta_list,t1,t2,f1=1.0,f2=8.0,lowpass=0.2,client=cl
 
 # Example locating single window interactively (make sure to disable any matplotlib backend)
 # Click on envelope traces you want to remove from data and relocate
+#
+# NOTE:		The interaction part has only been lightly tested. Expect bugs with the UI here.
+#			All the processing and location stuff (sans-interaction mode) are fairly well
+#			tested though.
+#
 XC   = XC_main.XCOR(env)
 loc  = XC.locate()
 # now do the same but bootstrap to estimate location stability
