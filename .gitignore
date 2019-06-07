@@ -3,6 +3,7 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+.DS_Store
 
 .env
 /XC_loc/default_vel_model.npz
