@@ -254,6 +254,10 @@ def XC_locate(win,XC):
 											  llcrnrlon=lonlims[0],urcrnrlon=lonlims[1],
 											  lat_0=np.array(latlims).mean(),lon_0=np.array(lonlims).mean(),
 											  resolution=XC.map_resolution)
+				XC.map2 = Basemap(projection='tmerc',llcrnrlat=latlims[0],urcrnrlat=latlims[1],
+							  llcrnrlon=lonlims[0],urcrnrlon=lonlims[1],
+							  lat_0=np.array(latlims).mean(),lon_0=np.array(lonlims).mean(),
+							  resolution=XC.map_resolution)
 				print('...finished...')
 			""" set up some variables for plotting """
 			CC1=1-CCrm['C'][:,CCrm['indx'][0,:]!=CCrm['indx'][1,:]]

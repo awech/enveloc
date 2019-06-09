@@ -146,7 +146,7 @@ def XC_plot(CC,XC,CC1,misfit,loc):
 
 	############### plot map ###############
 	########################################
-	map_ax = fig.add_subplot(gs[:25,:13])
+	map_ax = plt.subplot(gs[:25,:13])
 	XC.map.drawcoastlines()
 	XC.map.drawmapboundary(fill_color='lightblue')
 	XC.map.fillcontinents(color='gray',lake_color='lightblue')
@@ -185,7 +185,7 @@ def XC_plot(CC,XC,CC1,misfit,loc):
 
 	############ plot envelopes ############
 	########################################
-	trace_ax = fig.add_subplot(gs[30:,:9])
+	trace_ax = plt.subplot(gs[30:,:9])
 	for i,tr in enumerate(st_sort):
 		T=np.linspace(mdates.date2num(tr.stats.starttime.datetime),mdates.date2num(tr.stats.endtime.datetime),len(tr.data))
 		h_trace.append(plt.plot(mdates.num2date(T),i+tr.data/tr.data.max(),color=trace_color0,linewidth=0.2))
@@ -209,7 +209,7 @@ def XC_plot(CC,XC,CC1,misfit,loc):
 
 	########## plot correlations ###########
 	########################################
-	cc_ax = fig.add_subplot(gs[30:,11:])
+	cc_ax = plt.subplot(gs[30:,11:])
 	h_5=list()
 	for i in range(len(CC['st'])):
 		k0=sort_key[i]
@@ -239,11 +239,11 @@ def XC_plot(CC,XC,CC1,misfit,loc):
 
 	########### plot misfit map ############
 	########################################
-	misfit_ax1 = fig.add_subplot(gs[:11,14:])
-	XC.map.drawcoastlines()
-	XC.map.contourf(XC._grid['LON'][:,:,ii[2]], XC._grid['LAT'][:,:,ii[2]], msft[:,:,ii[2]],40,latlon=True)
-	XC.map.plot(XC._grid['LON'][ii[0],ii[1],ii[2]],-XC._grid['DEP'][ii[0],ii[1],ii[2]],'rs',latlon=True)
-	XC.map.drawparallels(parallels[1:3],color='w',linewidth=0.2,dashes=[1,4],labels=[False,True,True,False],fontsize=6,labelstyle='+/-',fmt='%.3f')
+	misfit_ax1 = plt.subplot(gs[:11,14:])
+	XC.map2.drawcoastlines()
+	XC.map2.contourf(XC._grid['LON'][:,:,ii[2]], XC._grid['LAT'][:,:,ii[2]], msft[:,:,ii[2]],40,latlon=True)
+	XC.map2.plot(XC._grid['LON'][ii[0],ii[1],ii[2]],-XC._grid['DEP'][ii[0],ii[1],ii[2]],'rs',latlon=True)
+	XC.map2.drawparallels(parallels[1:3],color='w',linewidth=0.2,dashes=[1,4],labels=[False,True,True,False],fontsize=6,labelstyle='+/-',fmt='%.3f')
 	plt.title('Misfit Function',fontsize=8)
 	########################################
 	########################################
@@ -251,7 +251,7 @@ def XC_plot(CC,XC,CC1,misfit,loc):
 
 	########## plot misfit slice ###########
 	########################################
-	misfit_ax2 = fig.add_subplot(gs[12:24,14:])
+	misfit_ax2 = plt.subplot(gs[12:24,14:])
 	map_aspect = (meridians[-1]-meridians[0])/((parallels[-1]-parallels[0])*111.1)
 	if map_aspect > 1:
 		misfit_ax2.set_aspect((meridians[-1]-meridians[0])/((parallels[-1]-parallels[0])*111.1))
