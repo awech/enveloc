@@ -31,7 +31,6 @@ setup(
     'Intended Audience :: Science/Research',
     'Topic :: Scientific/Engineering',
     'License :: OSI Approved :: GNU Library or Lesser General Public',
-    'License (LGPL)',
     'Programming Language :: Python :: 3.7',
     'Programming Language :: Python :: 3.8',
   ],
