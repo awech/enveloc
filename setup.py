@@ -8,6 +8,8 @@ using envelope cross correlation and a grid search
 setup(
   name = 'XC_loc',
   packages = find_packages(),
+  package_data={'': ['default_vel_model.tvel']},
+  include_package_data=True,
   version = '1.0',
   license='LGPL',
   description = 'XC_loc - envelope cross-correlation location method',   # Give a short description about your library
