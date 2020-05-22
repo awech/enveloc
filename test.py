@@ -66,7 +66,7 @@ loc  = XC.locate()
 
 # Example using rotated grid:
 
-rotation={ 'x'    : np.arange(-20,20,1),
+rotation={'x'    : np.arange(-20,20,1),
 		  'y'    : np.arange(-20,20,1),
 		  'z'    : np.arange(1,39,2),
 		  'lat0' : 56.919,
