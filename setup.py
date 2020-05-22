@@ -11,7 +11,7 @@ setup(
   version = '1.0',
   license='LGPL',
   description = 'XC_loc - envelope cross-correlation location method',   # Give a short description about your library
-  'long_description': long_description,
+  long_description = long_description,
   author = 'Aaron Wech',
   author_email = 'awech@usgs.gov',
   url = 'https://github.com/awech/XC_loc',
