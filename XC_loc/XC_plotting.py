@@ -4,6 +4,11 @@ import matplotlib.dates as mdates
 from matplotlib.widgets import Button
 import numpy as np
 
+import cartopy.crs as ccrs
+import cartopy.feature as cfeature
+import matplotlib.ticker as mticker
+from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
+
 
 trace_ax  = []
 h_trace   = []
@@ -29,7 +34,7 @@ trace_color1   = 'r'
 xcorr_color0   = 'royalblue'
 xcorr_color1   = 'r'
 
-interval = 0.2
+interval = 0.05
 
 def on_click(event):
 	global krm
@@ -146,28 +151,56 @@ def XC_plot(CC,XC,CC1,misfit,loc):
 
 	############### plot map ###############
 	########################################
-	map_ax = plt.subplot(gs[:25,:13])
-	XC.map.drawcoastlines()
-	XC.map.drawmapboundary(fill_color='lightblue')
-	XC.map.fillcontinents(color='gray',lake_color='lightblue')
+	map_ax = fig.add_subplot(gs[:25,:13], projection=ccrs.PlateCarree())
+	if XC.rotation:
+		latlims=[XC._grid['LAT'].flatten().min(), XC._grid['LAT'].flatten().max()]
+		lonlims=[XC._grid['LON'].flatten().min(), XC._grid['LON'].flatten().max()]
+	else:
+		latlims=[XC.grid_size['lats'][0],XC.grid_size['lats'][-1]]
+		lonlims=[XC.grid_size['lons'][0],XC.grid_size['lons'][-1]]
+	map_ax.set_extent(lonlims+latlims, crs=ccrs.PlateCarree())
+	map_ax.add_feature(cfeature.LAND,color='silver')
+	map_ax.add_feature(cfeature.OCEAN,color='lightblue')
+	map_ax.add_feature(cfeature.COASTLINE)
+	map_ax.add_feature(cfeature.BORDERS, linestyle=':')
+	map_ax.add_feature(cfeature.LAKES, color='lightblue', alpha=0.5)
+	map_ax.add_feature(cfeature.RIVERS, color='lightblue')
+	
 	# add lat/lon labels
-	parallels=np.linspace(XC.map.boundarylats.min(),XC.map.boundarylats.max(),4)
-	meridians=np.linspace(XC.map.boundarylons.min(),XC.map.boundarylons.max(),4)
-	XC.map.drawparallels(parallels[1:3],color='w',linewidth=0.5,dashes=[1,4],labels=[True,False,False,True],fontsize=6,labelstyle='+/-',fmt='%.3f')
-	XC.map.drawmeridians(meridians[1:3],color='w',linewidth=0.5,dashes=[1,4],labels=[True,False,False,True],fontsize=6,labelstyle='+/-',fmt='%.3f')
+	gl = map_ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=True,
+                  linewidth=0.5, color='white', alpha=0.8, linestyle=':')
+	gl.xformatter = LongitudeFormatter(zero_direction_label=True)
+	gl.yformatter = LatitudeFormatter()
+	meridians = np.linspace(lonlims[0],lonlims[-1],4)
+	parallels = np.linspace(latlims[0],latlims[-1],4)
+	gl.xlocator = mticker.FixedLocator(meridians)
+	gl.ylocator = mticker.FixedLocator(parallels)
+	gl.xlabels_bottom = False
+	gl.ylabels_right = False
+	gl.xlabel_style = {'size': 6}
+	gl.ylabel_style = {'size': 6}
+
 	# add stations to map
 	stalats=np.array([tr.stats.coordinates.latitude for tr in st_sort])
 	stalons=np.array([tr.stats.coordinates.longitude for tr in st_sort])
 	stanames=[tr.stats.station for tr in st_sort]
 	for i,name in enumerate(stanames):
-		x,y=XC.map(stalons[i],stalats[i])
-		h_maptext.append(plt.text(x,y,name,fontsize=9,color=st_text_color0))
-		h_mapdot.append(XC.map.plot(stalons[i],stalats[i],'^',color=st_dot_color0,latlon=True,markeredgecolor='k',markersize=8,markeredgewidth=0.5))
+		h_mapdot.append(
+						map_ax.plot(stalons[i],stalats[i],transform=ccrs.PlateCarree(),
+								marker='^', color=st_dot_color0, markeredgecolor='k',
+								markersize=8,markeredgewidth=0.5)
+						)
+		h_maptext.append(
+						map_ax.text(stalons[i],stalats[i],name,
+									fontsize=9,color=st_text_color0)
+						)
+
 	# add location(s) to the map
 	rand1=(np.random.random_sample((len(loc.bstrap_lon),))-0.5)/50.
 	rand2=(np.random.random_sample((len(loc.bstrap_lon),))-0.5)/50.
-	XC.map.plot(loc.bstrap_lon+rand1,loc.bstrap_lat+rand2,'.',color='lightgreen',latlon=True,markeredgecolor='k',markersize=2,markeredgewidth=0.5)
-	XC.map.plot(loc.longitude,loc.latitude,'g*',latlon=True,markeredgecolor='k',markersize=10,markeredgewidth=0.5)
+	map_ax.plot(loc.bstrap_lon+rand1,loc.bstrap_lat+rand2,'.',color='lightgreen',markeredgecolor='k',markersize=2,markeredgewidth=0.5)
+	map_ax.plot(loc.longitude,loc.latitude,'*',markerfacecolor='firebrick',markeredgecolor='k',markersize=10,markeredgewidth=0.5)
+	
 	if np.isnan(loc.horizontal_scatter):
 		plt.title('Lat: {:.3f}, Lon: {:.3f}\nDepth {:.1f} km'.format(loc.latitude,
 																	 loc.longitude,
@@ -239,11 +272,25 @@ def XC_plot(CC,XC,CC1,misfit,loc):
 
 	########### plot misfit map ############
 	########################################
-	misfit_ax1 = plt.subplot(gs[:11,14:])
-	XC.map2.drawcoastlines()
-	XC.map2.contourf(XC._grid['LON'][:,:,ii[2]], XC._grid['LAT'][:,:,ii[2]], msft[:,:,ii[2]],40,latlon=True)
-	XC.map2.plot(XC._grid['LON'][ii[0],ii[1],ii[2]],-XC._grid['DEP'][ii[0],ii[1],ii[2]],'rs',latlon=True)
-	XC.map2.drawparallels(parallels[1:3],color='w',linewidth=0.2,dashes=[1,4],labels=[False,True,True,False],fontsize=6,labelstyle='+/-',fmt='%.3f')
+	misfit_ax1 = plt.subplot(gs[:11,14:], projection=ccrs.PlateCarree())
+	misfit_ax1.set_extent(lonlims+latlims, crs=ccrs.PlateCarree())
+	misfit_ax1.add_feature(cfeature.COASTLINE)
+	misfit_ax1.contourf(XC._grid['LON'][:,:,ii[2]], 
+						XC._grid['LAT'][:,:,ii[2]], 
+						msft[:,:,ii[2]],40,
+                		transform=ccrs.PlateCarree(),
+                		cmap='viridis_r')
+	misfit_ax1.plot(loc.longitude,loc.latitude,marker='*',color='firebrick',markeredgewidth=0.1,markeredgecolor='firebrick',markersize=6)
+	misfit_ax1.plot(stalons,stalats,marker='^',color='gray',markeredgewidth=0.1,markeredgecolor='gray',markersize=4,linewidth=0)
+	gl2 = misfit_ax1.gridlines(crs=ccrs.PlateCarree(), draw_labels=True,
+              linewidth=0.2, color='white', alpha=0.8, linestyle=':')
+	gl2.xlocator = mticker.FixedLocator(meridians)
+	gl2.ylocator = mticker.FixedLocator(parallels)
+	gl2.yformatter = LatitudeFormatter()
+	gl2.xlabels_bottom = False
+	gl2.xlabels_top = False
+	gl2.ylabels_left = False
+	gl2.ylabel_style = {'size': 6}
 	plt.title('Misfit Function',fontsize=8)
 	########################################
 	########################################
@@ -255,20 +302,25 @@ def XC_plot(CC,XC,CC1,misfit,loc):
 	map_aspect = (meridians[-1]-meridians[0])/((parallels[-1]-parallels[0])*111.1)
 	if map_aspect > 1:
 		misfit_ax2.set_aspect((meridians[-1]-meridians[0])/((parallels[-1]-parallels[0])*111.1))
-	plt.contourf(XC._grid['LON'][ii[0],:,:], -XC._grid['DEP'][ii[0],:,:], msft[ii[0],:,:],40)
+	plt.contourf(XC._grid['LON'][ii[0],:,:], -XC._grid['DEP'][ii[0],:,:], msft[ii[0],:,:],40,cmap='viridis_r')
+	plt.plot(loc.longitude,-loc.depth,'*',markerfacecolor='firebrick',markeredgecolor='firebrick',markeredgewidth=0.1)
 	misfit_ax2.yaxis.tick_right()
 	plt.ylabel('Depth',fontsize=8)
 	misfit_ax2.yaxis.set_label_position('right')
+	plt.gca().set_xticks(meridians[1:3])
+	misfit_ax2.xaxis.set_major_formatter(LongitudeFormatter(zero_direction_label=True))
 	plt.xlabel('Longitude',fontsize=8)
-	plt.tick_params(axis='both', which='major', labelsize=6)
+	plt.tick_params(axis='y', which='major', labelsize=6)
+	plt.tick_params(axis='x', which='major', labelsize=5)
+	plt.grid(linestyle=':',linewidth=0.2,color='w')
 	########################################
 	########################################
 
-	fig.subplots_adjust(left=0.1,bottom=0.04,right=0.91,top=0.95,wspace=0.0,hspace=0.0)
-	a1=misfit_ax1.get_position()
-	a2=misfit_ax2.get_position()
-	pos = [a1.bounds[0],a2.bounds[1],a1.width,a1.height]
-	misfit_ax2.set_position(pos)
+	# fig.subplots_adjust(left=0.1,bottom=0.04,right=0.91,top=0.95,wspace=0.0,hspace=0.0)
+	# a1=misfit_ax1.get_position()
+	# a2=misfit_ax2.get_position()
+	# pos = [a1.bounds[0],a2.bounds[1],a1.width,a1.height]
+	# misfit_ax2.set_position(pos)
 
 
 	if XC.interact:
@@ -302,7 +354,3 @@ def XC_plot(CC,XC,CC1,misfit,loc):
 	plot_opt['restart']=restart
 
 	return plot_opt
-
-
-
-

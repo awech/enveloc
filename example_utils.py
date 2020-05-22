@@ -82,10 +82,8 @@ def get_IRIS_data(sta_list,t1,t2,f1=1.0,f2=8.0,lowpass=0.2,client=None):
 	st.detrend('demean')
 	st.taper(max_percentage=None,max_length=5)
 	st.filter('bandpass',freqmin=f1,freqmax=f2,corners=3,zerophase=True)
-	st = st.remove_response(output='DISP')
 	env = make_env(st.copy(),lowpass=lowpass)
-	st.trim(st[0].stats.starttime+dt,st[0].stats.endtime-dt)
 	env.trim(env[0].stats.starttime+dt,env[0].stats.endtime-dt)
 
-	return st, env
+	return env
 

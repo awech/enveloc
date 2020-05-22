@@ -194,7 +194,16 @@ def XC_locate(win,XC):
 
 			####################################################
 			""" Check if location is on grid edge """
-			if np.in1d(tmp_lat,XC.grid_size['lats'].take([0,-1]))[0] or np.in1d(tmp_lon,XC.grid_size['lons'].take([0,-1]))[0]:
+			edge_check=False
+			if XC.rotation:
+				if np.in1d(tmp_lat,XC._grid['LAT'][0,:,0])[0] or np.in1d(tmp_lat,XC._grid['LAT'][-1,:,0])[0]:
+					edge_check=True
+				if np.in1d(tmp_lat,XC._grid['LON'][0,:,0])[0] or np.in1d(tmp_lat,XC._grid['LON'][-1,:,0])[0]:
+					edge_check=True
+			else:
+				if np.in1d(tmp_lat,XC.grid_size['lats'].take([0,-1]))[0] or np.in1d(tmp_lon,XC.grid_size['lons'].take([0,-1]))[0]:
+					edge_check=True
+			if edge_check:	
 				if XC.output > 1:
 					print('On grid edge!! No location for you.')
 				if bstrap != np.arange(XC.bootstrap)[-1]:
@@ -209,7 +218,10 @@ def XC_locate(win,XC):
 
 			""" Regrid if XC.regrid==True """
 			if XC.regrid:
-				tmp_lat, tmp_lon, tmp_dep = xloc_Tools.regridHypocenter(CCnew,XC,misfit)
+				if XC.rotation:
+					tmp_lat, tmp_lon, tmp_dep = xloc_Tools.regridHypocenter_rotated(XC,misfit)
+				else:
+					tmp_lat, tmp_lon, tmp_dep = xloc_Tools.regridHypocenter(XC,misfit)
 
 
 			####################################################
@@ -242,23 +254,8 @@ def XC_locate(win,XC):
 
 		####################################################
 		""" Done with bootstrap loop. Plot & interact """
-		if XC.visual and XC._num_processors==1:
+		if XC.plot and XC._num_processors==1:
 			from XC_loc.XC_plotting import XC_plot
-			""" if map hasn't yet been made, make one """
-			if 'map' not in XC.__dict__:
-				from mpl_toolkits.basemap import Basemap					
-				latlims=[XC.grid_size['lats'][0],XC.grid_size['lats'][-1]]
-				lonlims=[XC.grid_size['lons'][0],XC.grid_size['lons'][-1]]
-				print('...creating basemap...')
-				XC.map = Basemap(projection='tmerc',llcrnrlat=latlims[0],urcrnrlat=latlims[1],
-											  llcrnrlon=lonlims[0],urcrnrlon=lonlims[1],
-											  lat_0=np.array(latlims).mean(),lon_0=np.array(lonlims).mean(),
-											  resolution=XC.map_resolution)
-				XC.map2 = Basemap(projection='tmerc',llcrnrlat=latlims[0],urcrnrlat=latlims[1],
-							  llcrnrlon=lonlims[0],urcrnrlon=lonlims[1],
-							  lat_0=np.array(latlims).mean(),lon_0=np.array(lonlims).mean(),
-							  resolution=XC.map_resolution)
-				print('...finished...')
 			""" set up some variables for plotting """
 			CC1=1-CCrm['C'][:,CCrm['indx'][0,:]!=CCrm['indx'][1,:]]
 			Nseis0=len(CCrm['st'])
@@ -393,7 +390,7 @@ class event_list(object):
 		if min_lon:
 			NEW.events=NEW.events[NEW.get_lons()>min_lon]
 		if max_lon:
-			NEW.events=NEW.events[NEW.get_lons()>max_lon]
+			NEW.events=NEW.events[NEW.get_lons()<max_lon]
 		if min_horizontal_scatter:
 			d_xy=np.array([a.horizontal_scatter for a in self.events])
 			NEW.events=NEW.events[d_xy>min_horizontal_scatter]
@@ -737,7 +734,7 @@ class XCOR(object):
 					     inputing a surface wave velocity, for example.
 					     See obspy taup documentation for more details on phase nomenclature.
 		normType       - Integer 1 or 2 to use an L1 or L2 norm. Default = 1
-		visual		   - Boolean flag to plot or not. Default = True.
+		plot		   - Boolean flag to plot or not. Default = True.
 		interact       - Boolean flag to interact with plot or not. Default = True
 		map_resolution - Character to define matplotlib's Basemap resolution. Options are:
 						 c' (crude),'l' (low),'i' (intermediate),'h' (high) or 'f' (full)
@@ -765,7 +762,7 @@ class XCOR(object):
 		lookup_type	   - Type of interpolation method to use when getting a predicted cross-correlation
 						 value for each channel pair for each grid ('linear', 'nearest', 'zero', 'slinear', 
 						 'quadratic', 'cubic'). See scipy.interpolate.interp1d for details. Default='cubic'
-		transform	   - NOT IMPLEMENTED. Does nothing.
+		rotation	   - NOT IMPLEMENTED. Does nothing.
 		dTmax_s		   - Maximum cross-correlation shift in seconds. Defaults to the smaller of:
 							a) 1/2 of the obspy stream window length
 							b) the maximum predicted inter-station differential time + 'dt'
@@ -798,9 +795,9 @@ class XCOR(object):
 	"""
 
 	def __init__(self,st,model=None,grid_size=None,detrend=True,regrid=False,phase_types=['s','S'],
-				 	     normType=1,visual=True,interact=True,map_resolution='h',output=1,
+				 	     normType=1,plot=True,interact=True,map_resolution='h',output=1,
 				 	     Cmin=0.5,Cmax=0.995,sta_min=3,dx_min=0.1,dt=3.0,bootstrap=1,
-				 	     bootstrap_prct=0.04,lookup_type='cubic',transform=None,dTmax_s=None,
+				 	     bootstrap_prct=0.04,lookup_type='cubic',rotation=None,dTmax_s=None,
 				 	     rd_freq=None,raw_traces=[],env_hp=[],edge_control=0.03,num_processors=1,
 						 tt_file=None,waveform_loc=False,model_dir=None,gap_value=-123454321):
 
@@ -808,9 +805,10 @@ class XCOR(object):
 			output = 1
 		elif output==False:
 			output = 0
-		self.output     = output
-		self.traces      = st
-		self.detrend     = detrend
+		self.output    = output
+		self.traces    = st
+		self.detrend   = detrend
+		self.rotation  = rotation
 		if not tt_file:
 			import os
 			if not model_dir:
@@ -829,27 +827,30 @@ class XCOR(object):
 				phase_types=[phase_types]
 			self.phase_types = phase_types
 
-			if not grid_size and not transform:
-				self.grid_size=dict({'lats':[],'lons':[],'deps':[]})
-				from obspy.geodetics.base import gps2dist_azimuth
-
-				print('Warning!  No grid provided.')
-				print('Making grid based on stations provided...')
-
-				lats = np.array([tr.stats.coordinates.latitude for tr in st])
-				lons = np.array([tr.stats.coordinates.longitude for tr in st])
-				dlat = 0.33*(lats.max()-lats.min())
-				dlon = 0.33*(lons.max()-lons.min())
-				self.grid_size['lats'] = np.linspace(lats.min()-dlat,lats.max()+dlat,20)
-				self.grid_size['lons'] = np.linspace(lons.min()-dlon,lons.max()+dlon,25)
-				tmp = gps2dist_azimuth(self.grid_size['lats'].max(),self.grid_size['lons'].max(),
-									   self.grid_size['lats'].min(),self.grid_size['lons'].min())
-				max_depth = np.min([tmp[0]/1000, 60.])
-				self.grid_size['deps'] = np.linspace(0.5,max_depth,10)
-			else:
+			if grid_size:
 				self.grid_size=grid_size
+			else:
+				if self.rotation:
+					self.grid_size=dict({'x':self.rotation['x'],'y':self.rotation['y'],'deps':self.rotation['z']})
+				else:
+					self.grid_size=dict({'lats':[],'lons':[],'deps':[]})
+					from obspy.geodetics.base import gps2dist_azimuth
 
-			self.get_traveltimes()
+					print('Warning!  No grid provided.')
+					print('Making grid based on stations provided...')
+
+					lats = np.array([tr.stats.coordinates.latitude for tr in st])
+					lons = np.array([tr.stats.coordinates.longitude for tr in st])
+					dlat = 0.33*(lats.max()-lats.min())
+					dlon = 0.33*(lons.max()-lons.min())
+					self.grid_size['lats'] = np.linspace(lats.min()-dlat,lats.max()+dlat,20)
+					self.grid_size['lons'] = np.linspace(lons.min()-dlon,lons.max()+dlon,25)
+					tmp = gps2dist_azimuth(self.grid_size['lats'].max(),self.grid_size['lons'].max(),
+										   self.grid_size['lats'].min(),self.grid_size['lons'].min())
+					max_depth = np.min([tmp[0]/1000, 60.])
+					self.grid_size['deps'] = np.linspace(0.5,max_depth,10)
+
+			self.calculate_traveltimes()
 
 			if 'kmps' in self.phase_types[0]:
 				self._v0     = float(self.phase_types[0].split('kmps')[0])
@@ -864,10 +865,10 @@ class XCOR(object):
 
 		self.regrid      = regrid
 		self._normType   = normType
-		self.visual      = visual
+		self.plot        = plot
 		
 		self.interact    = interact
-		if not self.visual:
+		if not self.plot:
 			self.interact = False
 		
 		self.map_resolution  = map_resolution
@@ -927,7 +928,7 @@ class XCOR(object):
 		return 'parameters(' + '\n'.join(A) + ')'
 
 
-	def get_traveltimes(self):
+	def calculate_traveltimes(self):
 		""" Calculate travel times based on the model and grid provided in the XCOR object """
 		if 'default_vel_model' in self._model_file:
 			try:
@@ -946,7 +947,10 @@ class XCOR(object):
 			self.model = TauPyModel(model=self._model_file)
 
 		self._grid=dict({'LON':[],'LAT':[],'DEP':[]})
-		self._grid['LON'],self._grid['LAT'],self._grid['DEP'] = np.meshgrid(self.grid_size['lons'],self.grid_size['lats'],self.grid_size['deps'])
+		if self.rotation:
+			self._grid['LON'],self._grid['LAT'],self._grid['DEP'] = xloc_Tools.create_rotated_grid(self.rotation)
+		else:
+			self._grid['LON'],self._grid['LAT'],self._grid['DEP'] = np.meshgrid(self.grid_size['lons'],self.grid_size['lats'],self.grid_size['deps'])
 
 		if self.output > 1:
 			progress(0, len(self.grid_size['deps']), status='complete')
@@ -965,7 +969,12 @@ class XCOR(object):
 					progress(i+1, len(self.traces), status='complete')
 		else: 
 		"""
-		LON,LAT = np.meshgrid(self.grid_size['lons'],self.grid_size['lats'])
+		if self.rotation:
+			LON=self._grid['LON'][:,:,0]
+			LAT=self._grid['LAT'][:,:,0]
+		else:
+			LON,LAT = np.meshgrid(self.grid_size['lons'],self.grid_size['lats'])
+
 		lat_corners = LAT[::LAT.shape[0]-1, ::LAT.shape[1]-1]
 		lon_corners = LON[::LON.shape[0]-1, ::LON.shape[1]-1]
 		dist=[]
@@ -1002,14 +1011,20 @@ class XCOR(object):
 	def load_traveltimes(self,file):
 		""" Load an .npz file containing a model and grid, and assign the appropriate times
 			to each trace in the object. The .npz file can be created initially using the
-			save_traveltimes() method after XCOR has run get_traveltimes() with a model and grid.
+			save_traveltimes() method after XCOR has run calculate_traveltimes() with a model and grid.
 		"""
 		npzfile=np.load(file)
-		self.grid_size={'lons':npzfile['lons'],
- 			 			'lats':npzfile['lats'],
-    		 			'deps':npzfile['deps']}
 		self._grid=dict({'LON':[],'LAT':[],'DEP':[]})
-		self._grid['LON'],self._grid['LAT'],self._grid['DEP'] = np.meshgrid(self.grid_size['lons'],self.grid_size['lats'],self.grid_size['deps'])
+		if self.rotation:
+			self.grid_size={'x'   :npzfile['x'],
+							'y'   :npzfile['y'],
+							'deps':npzfile['deps']}
+			self._grid['LON'],self._grid['LAT'],self._grid['DEP'] = xloc_Tools.create_rotated_grid(self.rotation)
+		else:
+			self.grid_size={'lons':npzfile['lons'],
+							'lats':npzfile['lats'],
+							'deps':npzfile['deps']}
+			self._grid['LON'],self._grid['LAT'],self._grid['DEP'] = np.meshgrid(self.grid_size['lons'],self.grid_size['lats'],self.grid_size['deps'])
 		self._model_layers=npzfile['model']
 		self.phase_types=npzfile['phase_types'].tolist()
 		for tr in self.traces:
@@ -1020,25 +1035,35 @@ class XCOR(object):
 
 	def save_traveltimes(self,outfile):
 		""" Save an .npz file containing the model and grid. The variables should be created 
-			using the get_traveltimes(), which is done internally method when initiating an
+			using the calculate_traveltimes(), which is done internally method when initiating an
 			XCOR object with a model and grid.
 		"""
-		lats  = self.grid_size['lats']
-		lons  = self.grid_size['lons']
-		deps  = self.grid_size['deps']
+
 		model = self.model.model.s_mod.v_mod.layers
 		phase_types = self.phase_types
+		deps  = self.grid_size['deps']
+
+		if self.rotation:
+			Xs  = self.grid_size['x']
+			Ys  = self.grid_size['y']
+		else:
+			lats  = self.grid_size['lats']
+			lons  = self.grid_size['lons']
 
 		stas = {}
 		for tr in self.traces:
 			stas[tr.id.replace('.','_')]=tr.TT
-		np.savez(outfile,lats=lats,lons=lons,deps=deps,model=model,phase_types=phase_types,stations=stas,**stas)
+		
+		if self.rotation:
+			np.savez(outfile,y=Ys,     x=Xs,     deps=deps,model=model,phase_types=phase_types,stations=stas,**stas)
+		else:
+			np.savez(outfile,lats=lats,lons=lons,deps=deps,model=model,phase_types=phase_types,stations=stas,**stas)
 
 
 	def locate(self,window_length=None,step=None,offset=0, include_partial_windows=False, nearest_sample=True, dTmax_s=None,num_processors=None):
 		""" Main location method.
 			If using this to locate a single window of data, simply call locate() with no input parameters.
-			All of the relevant details (visual, interact, map_resolution) are properties set in the initial
+			All of the relevant details (plot, interact, map_resolution) are properties set in the initial
 			object creation.
 
 			If using this to iterate over windows and locate, the following parameters must be set:
