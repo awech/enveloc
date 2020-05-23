@@ -9,20 +9,20 @@ setup(
   name = 'XC_loc',
   packages = find_packages(),
   include_package_data=True,
-  version = '1.0.3',
+  version = '1.0.4',
   license='LGPL',
   description = 'XC_loc - envelope cross-correlation location method',   # Give a short description about your library
   long_description = long_description,
   author = 'Aaron Wech',
   author_email = 'awech@usgs.gov',
   url = 'https://github.com/awech/XC_loc',
-  download_url = 'https://github.com/awech/XC_loc/archive/v1.0.3.tar.gz',    # I explain this later on
+  download_url = 'https://github.com/awech/XC_loc/archive/v1.0.4.tar.gz',    # I explain this later on
   keywords = ['envelope cross correlation', 'seimsology', 'tremor'],
   install_requires=[
-          'obspy',
           'numpy',
           'scipy',
           'matplotlib',
+          'obspy',
           'cartopy',
           'sklearn',
           'utm',

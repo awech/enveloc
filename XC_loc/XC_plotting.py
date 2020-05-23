@@ -308,6 +308,7 @@ def XC_plot(CC,XC,CC1,misfit,loc):
 	plt.ylabel('Depth',fontsize=8)
 	misfit_ax2.yaxis.set_label_position('right')
 	plt.gca().set_xticks(meridians[1:3])
+	plt.xlims(lonlims)
 	misfit_ax2.xaxis.set_major_formatter(LongitudeFormatter(zero_direction_label=True))
 	plt.xlabel('Longitude',fontsize=8)
 	plt.tick_params(axis='y', which='major', labelsize=6)
