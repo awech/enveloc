@@ -8,7 +8,7 @@ using envelope cross correlation and a grid search
 setup(
   name = 'XC_loc',
   packages = find_packages(),
-  package_data={'': ['default_vel_model.tvel']},
+  package_data={'XC_loc': ['default_vel_model.tvel']},
   include_package_data=True,
   version = '1.0.1',
   license='LGPL',
