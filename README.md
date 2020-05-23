@@ -1,11 +1,12 @@
 # XC_loc
-Python seismic envelope cross-correlation location
+Python package to perform envelope cross-correlation location in seismology
 
 ### Dependencies
-obspy<br>
+numpy<br>
 scipy<br>
 matplotlib<br>
-Basemap<br>
-numpy<br>
-pandas<br>
+proj<br>
+obspy<br>
+cartopy<br>
 sklearn<br>
+utm<br>
