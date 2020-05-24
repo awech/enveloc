@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import division
 from obspy.taup import TauPyModel
 from obspy.geodetics import locations2degrees
 import numpy as np
@@ -716,15 +714,19 @@ class XCOR(object):
 		Most of the paramater will self-assign, and in many cases that is fine. The only
 		essential variable is the obspy stream 'st', but you will likely want to give thought
 		and care to the grid and velocity model.
+
+		Parameters:
+		----------
 		
-		st             - Obspy stream. Each trace must have stats.coordinates.latitude/longitude
-		model 	       - Obspy taup model or model file from which to calculate travel times.
-					     If this is not provided, a default file will be called.
-		model_dir	   - Directory where model.npz file is place by obspy's taup program
-						 If not provided, it will default to within the XC_loc module directory
-		grid_size      - A dict with keys 'lats', 'lons', and 'deps', each of which are 1D
-					     monotonic numpy arrays. If unprovided, this will be designed based on
-					     the extent of the input stations.
+		st : Obspy stream, required
+			Each trace must have stats.coordinates.latitude/longitude
+		model : Obspy taup model or model file from which to calculate travel times
+			If this is not provided, a default file will be called.
+		model_dir : Directory where model.npz file is place by obspy's taup program
+			If not provided, it will default to within the XC_loc module directory
+		grid_size : A dict with keys 'lats', 'lons', and 'deps'
+			each of which are 1D monotonic numpy arrays. If unprovided, this will be designed based on
+			the extent of the input stations.
 		detrend        - Boolean to force a demean on st or not. Default = True
 		regrid         - Boolean to reinterpolate location on finer grid. Default = True
 		phase_types    - list of phases for which to calculate travel times. Ultimate travel time
@@ -762,7 +764,9 @@ class XCOR(object):
 		lookup_type	   - Type of interpolation method to use when getting a predicted cross-correlation
 						 value for each channel pair for each grid ('linear', 'nearest', 'zero', 'slinear', 
 						 'quadratic', 'cubic'). See scipy.interpolate.interp1d for details. Default='cubic'
-		rotation	   - NOT IMPLEMENTED. Does nothing.
+		rotation	   - dictionary defining desired rotated grid. Needs keys 'x' (x grid nodes), 'y' 
+						 (y grid nodes), 'z' (depth grid nodes), 'lat0' & 'lon0' (origin lat/lon),
+						 'az', rotation azimuth (counterclockwise from East)
 		dTmax_s		   - Maximum cross-correlation shift in seconds. Defaults to the smaller of:
 							a) 1/2 of the obspy stream window length
 							b) the maximum predicted inter-station differential time + 'dt'
@@ -990,7 +994,7 @@ class XCOR(object):
 			TIMES=[]
 			for x in DEGS:
 				PATHS=self.model.get_ray_paths(source_depth_in_km=z,distance_in_degree=x,receiver_depth_in_km=0,phase_list=self.phase_types)
-				if self.output > 4:
+				if self.output > 2:
 					print(self.phase_types)
 					print(PATHS)
 				times=np.array([p.time for p in PATHS])
