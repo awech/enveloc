@@ -3,7 +3,7 @@
 *detections* object
 -------------------
 
-.. automodule:: XC_loc.core
+.. automodule:: enveloc.core
     :members: detections
     :show-inheritance: False
     :noindex:

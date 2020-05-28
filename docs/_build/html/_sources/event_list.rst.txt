@@ -3,7 +3,7 @@
 *event_list* object
 -------------------
 
-.. automodule:: XC_loc.core
+.. automodule:: enveloc.core
     :members: event_list
     :show-inheritance: False
     :noindex:

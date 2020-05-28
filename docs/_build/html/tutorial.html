@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>4. Tutorial &mdash; XC_loc 1.0.6 documentation</title>
+  <title>4. Tutorial &mdash; enveloc 1.0.6 documentation</title>
   
 
   
@@ -50,7 +50,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> XC_loc
+            <a href="index.html" class="icon icon-home"> enveloc
           
 
           
@@ -123,7 +123,7 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">XC_loc</a>
+          <a href="index.html">enveloc</a>
         
       </nav>
 
@@ -186,7 +186,7 @@ be pre-processed before calling enveloc. Let’s get a couple minutes of data fr
 <a class="reference internal image-reference" href="_images/lava_lake_tremor.png"><img alt="_images/lava_lake_tremor.png" src="_images/lava_lake_tremor.png" style="width: 800px;" /></a>
 </div>
 <p>Then filter and convert to smoothed envelopes:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">XC_loc</span> <span class="kn">import</span> <span class="n">example_utils</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">enveloc</span> <span class="kn">import</span> <span class="n">example_utils</span>
 
 <span class="n">t1</span> <span class="o">=</span> <span class="s1">&#39;2018-04-28 13:07&#39;</span>
 <span class="n">t2</span> <span class="o">=</span> <span class="s1">&#39;2018-04-28 13:09&#39;</span>
@@ -231,7 +231,7 @@ be pre-processed before calling enveloc. Let’s get a couple minutes of data fr
 </pre></div>
 </div>
 <p>Alternatively, you could do all of the above steps in one test:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">XC_loc</span> <span class="kn">import</span> <span class="n">example_utils</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">enveloc</span> <span class="kn">import</span> <span class="n">example_utils</span>
 <span class="n">loc</span><span class="p">,</span> <span class="n">XC</span> <span class="o">=</span> <span class="n">example_utils</span><span class="o">.</span><span class="n">interactive_example</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -297,7 +297,7 @@ You can view the grid by calling <code class="xref py py-meth docutils literal n
 <div class="section" id="regional-example">
 <h3><span class="section-number">4.2.3. </span>Regional Example<a class="headerlink" href="#regional-example" title="Permalink to this headline">¶</a></h3>
 <p>Here is an example locating tectonic tremor in Pacific Northwest of the USA.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">XC_loc</span> <span class="kn">import</span> <span class="n">example_utils</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">enveloc</span> <span class="kn">import</span> <span class="n">example_utils</span>
 <span class="n">loc</span><span class="p">,</span> <span class="n">XC</span> <span class="o">=</span> <span class="n">example_utils</span><span class="o">.</span><span class="n">cascadia_example</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -323,7 +323,7 @@ correlations each time to create a cloud of scattered locations, which can be us
 <div class="section" id="making-windows">
 <h3><span class="section-number">4.3.1. </span>Making Windows<a class="headerlink" href="#making-windows" title="Permalink to this headline">¶</a></h3>
 <p>All of the above steps are the same: you pre-process the data beforehand, and hand <em>enveloc</em> envelopes, a velocity model and a grid. However, now instead of supplying an Obspy Stream of envelopes spanning a few minutes, you input hours or days of data.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">XC_loc</span> <span class="kn">import</span> <span class="n">example_utils</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">enveloc</span> <span class="kn">import</span> <span class="n">example_utils</span>
 
 <span class="n">t1</span> <span class="o">=</span> <span class="s1">&#39;2020-05-24 00:00&#39;</span>
 <span class="n">t2</span> <span class="o">=</span> <span class="s1">&#39;2020-05-24 08:00&#39;</span>
@@ -357,7 +357,7 @@ correlations each time to create a cloud of scattered locations, which can be us
 </div>
 <p>Now we can locate windows of length 300 seconds overlapping by 150 seconds:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">XC_loc.core</span> <span class="kn">import</span> <span class="n">XCOR</span>
+<span class="kn">from</span> <span class="nn">enveloc.core</span> <span class="kn">import</span> <span class="n">XCOR</span>
 
 <span class="n">mygrid</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;lons&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mi">125</span><span class="p">,</span><span class="o">-</span><span class="mi">121</span><span class="o">+</span><span class="mf">0.05</span><span class="p">,</span><span class="mf">0.075</span><span class="p">),</span>
           <span class="s1">&#39;lats&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">46.5</span><span class="p">,</span><span class="mf">49.0</span><span class="o">+</span><span class="mf">0.05</span><span class="p">,</span><span class="mf">0.075</span><span class="p">),</span>

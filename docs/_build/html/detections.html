@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>8. detections object &mdash; XC_loc 1.0.6 documentation</title>
+  <title>8. detections object &mdash; enveloc 1.0.6 documentation</title>
   
 
   
@@ -49,7 +49,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> XC_loc
+            <a href="index.html" class="icon icon-home"> enveloc
           
 
           
@@ -102,7 +102,7 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">XC_loc</a>
+          <a href="index.html">enveloc</a>
         
       </nav>
 
@@ -156,14 +156,14 @@
 <span id="detection"></span><h1><span class="section-number">8. </span><em>detections</em> object<a class="headerlink" href="#detections-object" title="Permalink to this headline">¶</a></h1>
 <dl class="py class">
 <dt>
-<em class="property">class </em><code class="sig-prename descclassname">XC_loc.core.</code><code class="sig-name descname">detections</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">detects</span><span class="o">=</span><span class="default_value">[]</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/XC_loc/core.html#detections"><span class="viewcode-link">[source]</span></a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">enveloc.core.</code><code class="sig-name descname">detections</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">detects</span><span class="o">=</span><span class="default_value">[]</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/enveloc/core.html#detections"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p><cite>detections</cite> object. Contains different ‘event_list’ objects as properties. This
 object allows for lists all events, clustered events, and unclustered events to
 exist all in one place and be modified using the same class methods.</p>
 <dl class="py method">
 <dt>
-<code class="sig-name descname">filter</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">min_t</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">max_t</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">min_lat</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">max_lat</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">min_lon</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">max_lon</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">min_horizontal_scatter</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">max_horizontal_scatter</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">min_depth</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">max_depth</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">min_rd</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">max_rd</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">min_vertical_scatter</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">max_vertical_scatter</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">min_num_channels</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">max_num_channels</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/XC_loc/core.html#detections.filter"><span class="viewcode-link">[source]</span></a></dt>
+<code class="sig-name descname">filter</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">min_t</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">max_t</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">min_lat</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">max_lat</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">min_lon</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">max_lon</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">min_horizontal_scatter</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">max_horizontal_scatter</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">min_depth</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">max_depth</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">min_rd</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">max_rd</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">min_vertical_scatter</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">max_vertical_scatter</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">min_num_channels</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">max_num_channels</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/enveloc/core.html#detections.filter"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Filter each event_list in the detections object by location properties and return a new detections object
 with modified event_lists</p>
 <dl class="field-list simple">
@@ -175,7 +175,7 @@ with modified event_lists</p>
 
 <dl class="py method">
 <dt>
-<code class="sig-name descname">cluster</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dx</span><span class="o">=</span><span class="default_value">25</span></em>, <em class="sig-param"><span class="n">dt</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">num_events</span><span class="o">=</span><span class="default_value">4</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/XC_loc/core.html#detections.cluster"><span class="viewcode-link">[source]</span></a></dt>
+<code class="sig-name descname">cluster</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dx</span><span class="o">=</span><span class="default_value">25</span></em>, <em class="sig-param"><span class="n">dt</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">num_events</span><span class="o">=</span><span class="default_value">4</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/enveloc/core.html#detections.cluster"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Cluster locations in the ‘detections’ event_list using <code class="xref py py-meth docutils literal notranslate"><span class="pre">sklearn.cluster.DBSCAN()</span></code></p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -198,13 +198,13 @@ event_list properties in place:</p>
 
 <dl class="py method">
 <dt>
-<code class="sig-name descname">uncluster</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/XC_loc/core.html#detections.uncluster"><span class="viewcode-link">[source]</span></a></dt>
+<code class="sig-name descname">uncluster</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/enveloc/core.html#detections.uncluster"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Method to remove all event lists not named ‘detections’. Operates in place.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt>
-<code class="sig-name descname">remove</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">max_scatter</span><span class="o">=</span><span class="default_value">3.0</span></em>, <em class="sig-param"><span class="n">rm_nan_loc</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">rm_nan_err</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">inplace</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/XC_loc/core.html#detections.remove"><span class="viewcode-link">[source]</span></a></dt>
+<code class="sig-name descname">remove</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">max_scatter</span><span class="o">=</span><span class="default_value">3.0</span></em>, <em class="sig-param"><span class="n">rm_nan_loc</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">rm_nan_err</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">inplace</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/enveloc/core.html#detections.remove"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Method to remove locations from the ‘detections’ event list. Returns a new copy.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -221,7 +221,7 @@ if not bootstrapping to obtain horizontal_scatter, eg. bootstrap=1), Default = <
 
 <dl class="py method">
 <dt>
-<code class="sig-name descname">remove_duplicates</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">distance</span><span class="o">=</span><span class="default_value">25.0</span></em>, <em class="sig-param"><span class="n">inplace</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/XC_loc/core.html#detections.remove_duplicates"><span class="viewcode-link">[source]</span></a></dt>
+<code class="sig-name descname">remove_duplicates</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">distance</span><span class="o">=</span><span class="default_value">25.0</span></em>, <em class="sig-param"><span class="n">inplace</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/enveloc/core.html#detections.remove_duplicates"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Method to remove locations within a list that have identical starttimes</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -236,7 +236,7 @@ identical starttimes are averaged. Default = 25.0.</p></li>
 
 <dl class="py method">
 <dt>
-<code class="sig-name descname">plot_locations</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">XC</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/XC_loc/core.html#detections.plot_locations"><span class="viewcode-link">[source]</span></a></dt>
+<code class="sig-name descname">plot_locations</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">XC</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/enveloc/core.html#detections.plot_locations"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Method to plot the locations from each <cite>event_list</cite></p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>

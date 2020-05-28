@@ -6,4 +6,4 @@ __pycache__/
 .DS_Store
 
 .env
-/XC_loc/default_vel_model.npz
+/enveloc/default_vel_model.npz

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>3. Usage overview &mdash; XC_loc 1.0.6 documentation</title>
+  <title>3. Usage overview &mdash; enveloc 1.0.6 documentation</title>
   
 
   
@@ -50,7 +50,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> XC_loc
+            <a href="index.html" class="icon icon-home"> enveloc
           
 
           
@@ -108,7 +108,7 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">XC_loc</a>
+          <a href="index.html">enveloc</a>
         
       </nav>
 
@@ -324,7 +324,9 @@ The vertical grid is 10 evenly spaced nodes spanning from 0 km to a maximum dept
 horizontal grid extent.</p>
 <p>A grid can be provided as an input argument, <em>grid_size</em>, a dictionary with keys
 ‘<em>lats</em>’, ‘<em>lons</em>’, and ‘<em>deps</em>’, each of which are 1D monotonic numpy arrays. For example:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">grid_size</span> <span class="o">=</span> <span class="p">{</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="n">grid_size</span> <span class="o">=</span> <span class="p">{</span>
               <span class="s1">&#39;deps&#39;</span> <span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span>           <span class="c1"># in km</span>
               <span class="s1">&#39;lons&#39;</span> <span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mf">158.4</span><span class="p">,</span><span class="o">-</span><span class="mf">157.9</span><span class="p">,</span> <span class="mf">0.04</span><span class="p">),</span>
               <span class="s1">&#39;lats&#39;</span> <span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span>  <span class="mf">56.7</span><span class="p">,</span>  <span class="mf">57.1</span><span class="p">,</span> <span class="mf">0.04</span><span class="p">)</span>
@@ -335,7 +337,9 @@ horizontal grid extent.</p>
 an input argument, <em>rotation</em>, a dictionary with keys ‘<em>x</em>’ (x grid nodes, in km), ‘<em>y</em>’ (y grid
 nodes, in km), ‘<em>z</em>’ (depth grid nodes, in km), ‘<em>lat0</em>’ &amp; ‘<em>lon0</em>’ (origin lat/lon), ‘<em>az</em>’, rotation
 azimuth (degrees counterclockwise from East). For example:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">rotation</span> <span class="o">=</span> <span class="p">{</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="n">rotation</span> <span class="o">=</span> <span class="p">{</span>
              <span class="s1">&#39;x&#39;</span>    <span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mi">20</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span> <span class="c1"># in km</span>
              <span class="s1">&#39;y&#39;</span>    <span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span> <span class="c1"># in km</span>
              <span class="s1">&#39;z&#39;</span>    <span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">39</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span>   <span class="c1"># in km</span>
