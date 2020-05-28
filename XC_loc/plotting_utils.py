@@ -1,3 +1,4 @@
+from collections import Counter
 import matplotlib.pyplot as plt
 from matplotlib import gridspec
 import matplotlib.dates as mdates
@@ -73,6 +74,7 @@ def on_click(event):
 				t[0].set_zorder(1000)
 
 		fig.canvas.draw()
+
 
 class Index(object):
 
@@ -175,8 +177,8 @@ def XC_plot(CC,XC,CC1,misfit,loc):
 	parallels = np.linspace(latlims[0],latlims[-1],4)
 	gl.xlocator = mticker.FixedLocator(meridians)
 	gl.ylocator = mticker.FixedLocator(parallels)
-	gl.xlabels_bottom = False
-	gl.ylabels_right = False
+	gl.bottom_labels = False
+	gl.right_labels = False
 	gl.xlabel_style = {'size': 6}
 	gl.ylabel_style = {'size': 6}
 
@@ -287,7 +289,7 @@ def XC_plot(CC,XC,CC1,misfit,loc):
 	gl2.xlocator = mticker.FixedLocator(meridians)
 	gl2.ylocator = mticker.FixedLocator(parallels)
 	gl2.yformatter = LatitudeFormatter()
-	gl2.xlabels_bottom = False
+	gl2.bottom_labels = False
 	gl2.xlabels_top = False
 	gl2.ylabels_left = False
 	gl2.ylabel_style = {'size': 6}
@@ -355,3 +357,181 @@ def XC_plot(CC,XC,CC1,misfit,loc):
 	plot_opt['restart']=restart
 
 	return plot_opt
+
+
+def grid_plot(XC):
+	from obspy.geodetics.base import gps2dist_azimuth
+
+	############### plot map ###############
+	########################################
+
+	fig = plt.figure(figsize=(6,7.2))
+
+	map_ax = fig.add_subplot(111, projection=ccrs.PlateCarree())
+	if XC.rotation:
+		latlims=[XC._grid['LAT'].flatten().min(), XC._grid['LAT'].flatten().max()]
+		lonlims=[XC._grid['LON'].flatten().min(), XC._grid['LON'].flatten().max()]
+	else:
+		latlims=[XC.grid_size['lats'][0],XC.grid_size['lats'][-1]]
+		lonlims=[XC.grid_size['lons'][0],XC.grid_size['lons'][-1]]
+	map_ax.set_extent(lonlims+latlims, crs=ccrs.PlateCarree())
+	map_ax.add_feature(cfeature.LAND,color='silver')
+	map_ax.add_feature(cfeature.OCEAN,color='lightblue')
+	map_ax.add_feature(cfeature.COASTLINE)
+	map_ax.add_feature(cfeature.BORDERS, linestyle=':')
+	map_ax.add_feature(cfeature.LAKES, color='lightblue', alpha=0.5)
+	map_ax.add_feature(cfeature.RIVERS, color='lightblue')
+	
+	# add lat/lon labels
+	gl = map_ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=True,
+                  linewidth=0.5, color='white', alpha=0.8, linestyle=':')
+	gl.xformatter = LongitudeFormatter(zero_direction_label=True)
+	gl.yformatter = LatitudeFormatter()
+	meridians = np.linspace(lonlims[0],lonlims[-1],4)
+	parallels = np.linspace(latlims[0],latlims[-1],4)
+	gl.xlocator = mticker.FixedLocator(meridians)
+	gl.ylocator = mticker.FixedLocator(parallels)
+	gl.bottom_labels = False
+	gl.right_labels = False
+	gl.xlabel_style = {'size': 6}
+	gl.ylabel_style = {'size': 6}
+
+	# add grid nodes
+	map_ax.plot(XC._grid['LON'][:,:,0].flatten(),XC._grid['LAT'][:,:,0].flatten(),transform=ccrs.PlateCarree(), marker='+', color='g', markersize=3,linewidth=0,)
+
+	# add stations to map
+	stalats=np.array([tr.stats.coordinates.latitude for tr in XC.traces])
+	stalons=np.array([tr.stats.coordinates.longitude for tr in XC.traces])
+	stanames=[tr.stats.station for tr in XC.traces]
+	for i,name in enumerate(stanames):
+		map_ax.plot(stalons[i],stalats[i],transform=ccrs.PlateCarree(),
+								marker='^', color=st_dot_color0, markeredgecolor='k',
+								markersize=8,markeredgewidth=0.5)
+		map_ax.text(stalons[i],stalats[i],name,
+									fontsize=9,color=st_text_color0)
+
+	if XC.rotation:
+		dx=XC.rotation['x'][1]-XC.rotation['x'][0]
+		dy=XC.rotation['y'][1]-XC.rotation['y'][0]
+		dz=XC.rotation['z'][1]-XC.rotation['z'][0]
+		plt.title('Stations and Grid Nodes\ndx={:.1f} km, dy={:.1f} km, dz={:.1f} km\nDepth range: {:.1f} - {:.1f} km'.format(dx,dy,dz,XC.rotation['z'][0],XC.rotation['z'][-1]),fontsize=8)
+	else:
+		dx=gps2dist_azimuth(XC.grid_size['lats'][0],XC.grid_size['lons'][0],
+							XC.grid_size['lats'][0],XC.grid_size['lons'][1])[0]/1000
+		dy=gps2dist_azimuth(XC.grid_size['lats'][0],XC.grid_size['lons'][0],
+							XC.grid_size['lats'][1],XC.grid_size['lons'][0])[0]/1000
+		dz=XC.grid_size['deps'][1]-XC.grid_size['deps'][0]
+		plt.title('Stations and Grid Nodes\ndx={:.2f} km, dy={:.2f} km, dz={:.2f} km\nDepth range {:.1f} - {:.1f} km'.format(dx,dy,dz,XC.grid_size['deps'][0],XC.grid_size['deps'][-1]),fontsize=8)
+
+	plt.show()
+	
+	########################################
+	########################################
+	
+	return
+
+
+def plot_locations(locs,XC):
+
+	gs = gridspec.GridSpec(4,1)
+	fig = plt.figure(figsize=(6,6))
+
+	map_ax = fig.add_subplot(gs[:3,0], projection=ccrs.PlateCarree())
+	if XC.rotation:
+		latlims=[XC._grid['LAT'].flatten().min(), XC._grid['LAT'].flatten().max()]
+		lonlims=[XC._grid['LON'].flatten().min(), XC._grid['LON'].flatten().max()]
+	else:
+		latlims=[XC.grid_size['lats'][0],XC.grid_size['lats'][-1]]
+		lonlims=[XC.grid_size['lons'][0],XC.grid_size['lons'][-1]]
+	map_ax.set_extent(lonlims+latlims, crs=ccrs.PlateCarree())
+	map_ax.add_feature(cfeature.LAND,color='silver')
+	map_ax.add_feature(cfeature.OCEAN,color='lightblue')
+	map_ax.add_feature(cfeature.COASTLINE)
+	map_ax.add_feature(cfeature.BORDERS, linestyle=':')
+	map_ax.add_feature(cfeature.LAKES, color='lightblue', alpha=0.5)
+	map_ax.add_feature(cfeature.RIVERS, color='lightblue')
+	
+	# add lat/lon labels
+	gl = map_ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=True,
+                  linewidth=0.5, color='white', alpha=0.8, linestyle=':')
+	gl.xformatter = LongitudeFormatter(zero_direction_label=True)
+	gl.yformatter = LatitudeFormatter()
+	meridians = np.linspace(lonlims[0],lonlims[-1],4)
+	parallels = np.linspace(latlims[0],latlims[-1],4)
+	gl.xlocator = mticker.FixedLocator(meridians)
+	gl.ylocator = mticker.FixedLocator(parallels)
+	gl.bottom_labels = False
+	gl.right_labels = False
+	gl.xlabel_style = {'size': 6}
+	gl.ylabel_style = {'size': 6}
+
+	stalats=np.array([tr.stats.coordinates.latitude for tr in XC.traces])
+	stalons=np.array([tr.stats.coordinates.longitude for tr in XC.traces])
+	stanames=[tr.stats.station for tr in XC.traces]
+
+	hist_ax = fig.add_subplot(gs[-1,0])
+	hist_ax.set_xlim(-1,len(XC.traces))
+	hist_ax.set_title('Station Usage',fontsize=10)
+
+	for i,name in enumerate(stanames):
+		map_ax.plot(stalons[i],stalats[i],transform=ccrs.PlateCarree(),
+							marker='^', color=st_dot_color0, markeredgecolor='k',
+							markersize=8,markeredgewidth=0.5)
+		map_ax.text(stalons[i],stalats[i],name,
+								fontsize=6,color=st_text_color0)
+
+	if 'event_list' in str(locs.__class__):
+		map_ax.scatter(locs.get_lons(),locs.get_lats(),transform=ccrs.PlateCarree(),
+			marker='o',s=18,color='red',edgecolors='k',linewidths=0.5)
+		stas=locs.get_stations()
+		sta_list=dict(Counter(stas).most_common())
+		for tr in XC.traces:
+			if tr.id not in sta_list.keys():
+				sta_list[tr.id] = 0
+		plt.bar(sta_list.keys(), sta_list.values(), width=0.5, color='gray')
+	
+	elif 'detections' in str(locs.__class__):
+		# 1st plot noise
+		h1=map_ax.scatter(locs.noise.get_lons(),locs.noise.get_lats(),transform=ccrs.PlateCarree(),
+			marker='o',s=8,color='lightsteelblue',edgecolors='k',linewidths=0.5)
+		# 2nd plot edge
+		h2=map_ax.scatter(locs.edge_clustered.get_lons(),locs.edge_clustered.get_lats(),transform=ccrs.PlateCarree(),
+			marker='o',s=12,color='darkorange',edgecolors='k',linewidths=0.5)
+		# 2nd plot edge
+		h3=map_ax.scatter(locs.core_clustered.get_lons(),locs.core_clustered.get_lats(),transform=ccrs.PlateCarree(),
+			marker='o',s=18,color='red',edgecolors='k',linewidths=0.5)
+
+		map_ax.legend([h1,h2,h3],tuple(['noise','edge','core']),loc='lower left',ncol=1,fontsize=8)
+
+		stas=locs.detections.get_stations()
+		sta_list=dict(Counter(stas).most_common())
+		for tr in XC.traces:
+			if tr.id not in sta_list.keys():
+				sta_list[tr.id] = 0
+		
+		b1=hist_ax.bar(sta_list.keys(), sta_list.values(), width=0.5, color='lightsteelblue')
+		
+		stas=locs.core_clustered.get_stations()
+		sta_list=dict(Counter(stas).most_common())
+		for tr in XC.traces:
+			if tr.id not in sta_list.keys():
+				sta_list[tr.id] = 0
+		b2=hist_ax.bar(sta_list.keys(), sta_list.values(), width=0.5, color='red')
+
+		stas=locs.edge_clustered.get_stations()
+		sta_list=dict(Counter(stas).most_common())
+		for tr in XC.traces:
+			if tr.id not in sta_list.keys():
+				sta_list[tr.id] = 0
+		b3=hist_ax.bar(sta_list.keys(), sta_list.values(), width=0.5, color='darkorange')
+
+		hist_ax.legend([b1,b3,b2],tuple(['noise','edge','core']),loc='upper right',ncol=1,fontsize=6)
+		hist_ax.set_ylabel('counts')
+
+
+	plt.xticks(rotation=45,fontsize=6,ha='right')
+
+	plt.show()
+
+	return
+
