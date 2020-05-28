@@ -8,5 +8,5 @@ matplotlib<br>
 proj<br>
 obspy<br>
 cartopy<br>
-sklearn<br>
+scikit-learn<br>
 utm<br>
