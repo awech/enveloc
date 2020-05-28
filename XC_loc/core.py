@@ -2,8 +2,8 @@ from obspy.taup import TauPyModel
 from obspy.geodetics import locations2degrees
 import numpy as np
 import sys
-import XC_loc.xcorr_Tools as xcorr_Tools
-import XC_loc.xloc_Tools as xloc_Tools
+from XC_loc import xcorr_utils
+from XC_loc import xloc_utils
 from copy import copy, deepcopy
 from itertools import combinations
 from obspy.geodetics.base import gps2dist_azimuth
@@ -11,25 +11,55 @@ from datetime import timedelta
 
 
 def progress(count, total, status=''):
-	""" Function to display status bar when calculating traveltimes """
+	"""
+	Method to display status bar when calculating traveltimes
+
+	Parameters
+	----------
+	count : int, required
+		number of current iteration
+	total : int, required
+		number of iterations required
+	status : str, optional
+		string to be printed to screen with status message
+
+	"""
+	
 	bar_len = 35
 	filled_len = int(round(bar_len * count / float(total)))
 	percents = round(100.0 * count / float(total), 1)
-	bar = '█' * filled_len + ' ' * (bar_len - filled_len)
+	bar = '#' * filled_len + ' ' * (bar_len - filled_len)
 	sys.stdout.write('Calculating travel times |{}| {}{} {}{}'.format(bar, percents, '%', status,'\r'))
 	sys.stdout.flush()  # As suggested by Rom Ruben (see: http://stackoverflow.com/questions/3173320/text-progress-bar-in-the-console/27871113#comment50529068_27871113)
 
 
 def checkvalue(value):
-	""" Function to switch from 'None' to NaN """
-	if not value:
+	"""
+	Function to switch from 'None' to NaN
+	
+	Parameters
+	----------
+	value : number, requred
+
+	"""
+
+	if isinstance(value,float) | isinstance(value,int):
+		pass
+	else:
 		value=np.NaN
 	return value
 
 
 def latlon2xy(loc):
-	""" Function to change lat/lon to x/y for distance calulation in clustering method """
-	from obspy.geodetics.base import gps2dist_azimuth
+	"""
+	Function to change lat/lon to x/y for distance calulation in clustering method
+
+	Parameters
+	----------
+	loc : obj, required
+		location object returned from `XC_locate`
+
+	"""
 	lats=np.array(loc.detections.get_lats())
 	lons=np.array(loc.detections.get_lons())
 
@@ -53,8 +83,11 @@ def latlon2xy(loc):
 
 
 def check_edgeproblems(edge_control,st_tmp):
-	""" Function to remove traces whose peak amplitude occur with 'edge_control' percent
-	    of the window edge """
+	"""
+	Function to remove traces whose peak amplitude occur with 'edge_control' percent
+	of the window edge
+
+	"""
 	edge=np.round(edge_control*st_tmp[0].stats.npts)
 	for tr in st_tmp:
 		if tr.data.argmax()<=edge-1 or tr.data.argmax()>=tr.stats.npts-edge:
@@ -63,7 +96,17 @@ def check_edgeproblems(edge_control,st_tmp):
 
 
 def XC_locate(win,XC):
-	""" Main location function. Called internally from 'locate()' method """
+	"""
+	Main location function. Called internally from `XCOR` class's `locate()` method
+
+	Parameters
+	----------
+	win : list, required
+		2 element list of obspy UTCDateTime start and end times for which to cut out a window of seismic data
+	XC : obj, required
+		object created by `XCOR` class
+
+	"""
 	
 	st_tmp=XC.traces.slice(win[0],win[1],nearest_sample=True)
 
@@ -76,8 +119,8 @@ def XC_locate(win,XC):
 			st_tmp.remove(tr)
 	if len(st_tmp) < XC.sta_min:
 		if XC.output > 0:
-			print('WARNING FROM XC_loc: too many traces with no data')
-			return location(starttime=win[0],endtime=win[1],channels=xloc_Tools.channel_list(st_tmp)) 	# return latitude, longitude, depth # return because these envelopes suck.
+			print('WARNING FROM XC_locate: too many traces with no data')
+			return location(starttime=win[0],endtime=win[1],channels=xloc_utils.channel_list(st_tmp)) 	# return latitude, longitude, depth # return because these envelopes suck.
 
 	""" Remove traces with flagged gaps """
 	for tr in st_tmp:
@@ -86,8 +129,8 @@ def XC_locate(win,XC):
 			st_tmp.remove(tr)
 	if len(st_tmp) < XC.sta_min:
 		if XC.output > 0:
-			print('WARNING FROM XC_loc: too many traces with no data')
-			return location(starttime=win[0],endtime=win[1],channels=xloc_Tools.channel_list(st_tmp)) 	# return latitude, longitude, depth # return because these envelopes suck.
+			print('WARNING FROM XC_locate: too many traces with no data')
+			return location(starttime=win[0],endtime=win[1],channels=xloc_utils.channel_list(st_tmp)) 	# return latitude, longitude, depth # return because these envelopes suck.
 
 
 	""" Remove traces with triggers within time window """
@@ -97,8 +140,8 @@ def XC_locate(win,XC):
 				st_tmp.remove(tr)
 	if len(st_tmp) < XC.sta_min:
 		if XC.output > 0:
-			print('WARNING FROM XC_loc: too many traces with triggers')
-			return location(starttime=win[0],endtime=win[1],channels=xloc_Tools.channel_list(st_tmp)) 	# return latitude, longitude, depth # return because these envelopes suck.
+			print('WARNING FROM XC_locate: too many traces with triggers')
+			return location(starttime=win[0],endtime=win[1],channels=xloc_utils.channel_list(st_tmp)) 	# return latitude, longitude, depth # return because these envelopes suck.
 
 
 	####################################################
@@ -110,8 +153,8 @@ def XC_locate(win,XC):
 		st_tmp=check_edgeproblems(XC._edge_control,st_tmp)
 		if np.unique([tr.stats.station for tr in st_tmp]).size < XC.sta_min:
 			if XC.output > 0:
-				print('WARNING FROM XC_loc: too many traces with peaks at edge of window')
-			return location(starttime=win[0],endtime=win[1],channels=xloc_Tools.channel_list(st_tmp)) 	# return latitude, longitude, depth # return because these envelopes suck.
+				print('WARNING FROM XC_locate: too many traces with peaks at edge of window')
+			return location(starttime=win[0],endtime=win[1],channels=xloc_utils.channel_list(st_tmp)) 	# return latitude, longitude, depth # return because these envelopes suck.
 	####################################################
 	####################################################
 
@@ -119,12 +162,12 @@ def XC_locate(win,XC):
 	""" perform initial cross-correlation of all traces """
 	if XC.detrend:
 		st_tmp.detrend('demean')
-	CC = xcorr_Tools.initial_correlation(XC,st_tmp)
+	CC = xcorr_utils.initial_correlation(XC,st_tmp)
 	""" return if not enough stations remain """
 	if CC['err']:
 		if XC.output > 1:
-			print('WARNING FROM XC_loc: need at least {:.0f} stations to correlate above {:.2f}'.format(XC.sta_min,XC.Cmin))
-		return location(starttime=win[0],endtime=win[1],channels=xloc_Tools.channel_list(CC['st'])) 	# return latitude, longitude, depth # return because these envelopes suck.	
+			print('WARNING FROM XC_locate: need at least {:.0f} stations to correlate above {:.2f}'.format(XC.sta_min,XC.Cmin))
+		return location(starttime=win[0],endtime=win[1],channels=xloc_utils.channel_list(CC['st'])) 	# return latitude, longitude, depth # return because these envelopes suck.	
 	####################################################
 	####################################################
 
@@ -147,7 +190,7 @@ def XC_locate(win,XC):
 		if (drop_key>-1).any():
 			if XC.output > 1:
 				print('Removing stations.')
-			CCrm = xcorr_Tools.remove_stations(CCrm,XC,drop_key)
+			CCrm = xcorr_utils.remove_stations(CCrm,XC,drop_key)
 
 		nan_count = 0
 		""" Loop for bootstrap iterations. Last iteration is uses all of the data. """
@@ -158,7 +201,7 @@ def XC_locate(win,XC):
 			if nan_count >= XC.bootstrap/2.:
 				if XC.output > 1:
 					print('Too many NaN bootstrap locations.')
-				return location(starttime=win[0],endtime=win[1],channels=xloc_Tools.channel_list(CCrm['st']))
+				return location(starttime=win[0],endtime=win[1],channels=xloc_utils.channel_list(CCrm['st']))
 			####################################################
 			####################################################
 
@@ -168,24 +211,24 @@ def XC_locate(win,XC):
 			CCnew=CCrm.copy()
 			""" If not the last iteration, throw away % of cc-matrix data  """
 			if bstrap != np.arange(XC.bootstrap)[-1]:
-				CCnew = xcorr_Tools.bootstrap_CC(CCrm,XC)
+				CCnew = xcorr_utils.bootstrap_CC(CCrm,XC)
 			""" Not enough stations remain? """	
 			if CCnew['err']:
 				if XC.output > 1:
-					print('WARNING FROM XC_loc: need at least {:.0f} stations to correlate above {:.2f}'.format(XC.sta_min,XC.Cmin))				
+					print('WARNING FROM XC_locate: need at least {:.0f} stations to correlate above {:.2f}'.format(XC.sta_min,XC.Cmin))				
 				""" Continue if bootstrap loop and iterate # of bad bstrap locations """
 				if bstrap != np.arange(XC.bootstrap)[-1]:
 					nan_count=nan_count+1
 					continue
 				### Return empty location object if it is last iteration   """
 				else:
-					return location(starttime=win[0],endtime=win[1],channels=xloc_Tools.channel_list(CCrm['st'])) 	# return latitude, longitude, depth # return because these envelopes suck.
+					return location(starttime=win[0],endtime=win[1],channels=xloc_utils.channel_list(CCrm['st'])) 	# return latitude, longitude, depth # return because these envelopes suck.
 			####################################################
 			####################################################
 
 
 			""" Do a grid search to get a hypocenter """
-			tmp_lat, tmp_lon, tmp_dep, misfit = xloc_Tools.CCtoHypocenter(CCnew,XC)
+			tmp_lat, tmp_lon, tmp_dep, misfit = xloc_utils.CCtoHypocenter(CCnew,XC)
 			if 'windows' not in XC.__dict__ and XC._num_processors==1:
 				XC.misfit=misfit
 
@@ -208,7 +251,7 @@ def XC_locate(win,XC):
 					nan_count=nan_count+1
 					continue
 				else:
-					return location(starttime=win[0],endtime=win[1],channels=xloc_Tools.channel_list(CCrm['st']))
+					return location(starttime=win[0],endtime=win[1],channels=xloc_utils.channel_list(CCrm['st']))
 			####################################################
 			####################################################
 
@@ -217,9 +260,9 @@ def XC_locate(win,XC):
 			""" Regrid if XC.regrid==True """
 			if XC.regrid:
 				if XC.rotation:
-					tmp_lat, tmp_lon, tmp_dep = xloc_Tools.regridHypocenter_rotated(XC,misfit)
+					tmp_lat, tmp_lon, tmp_dep = xloc_utils.regridHypocenter_rotated(XC,misfit)
 				else:
-					tmp_lat, tmp_lon, tmp_dep = xloc_Tools.regridHypocenter(XC,misfit)
+					tmp_lat, tmp_lon, tmp_dep = xloc_utils.regridHypocenter(XC,misfit)
 
 
 			####################################################
@@ -232,13 +275,13 @@ def XC_locate(win,XC):
 				bstrap_dep.append(tmp_dep)
 			### Last iteration. Set location object info with this location. """
 			else:
-				loc=location(latitude=tmp_lat,longitude=tmp_lon,depth=tmp_dep,starttime=win[0],endtime=win[1],channels=xloc_Tools.channel_list(CCrm['st']))
+				loc=location(latitude=tmp_lat,longitude=tmp_lon,depth=tmp_dep,starttime=win[0],endtime=win[1],channels=xloc_utils.channel_list(CCrm['st']))
 				""" Optionally calculate reduced displacement"""
 				if 'raw_traces' in XC.__dict__:
-					loc.reduced_displacement=xloc_Tools.reduced_displacement(loc,XC,XC.raw_traces.slice(loc.starttime,loc.endtime))
+					loc.reduced_displacement=xloc_utils.reduced_displacement(loc,XC,XC.raw_traces.slice(loc.starttime,loc.endtime))
 				""" If bootstraping at all, calculate scatter from bootstrap locations """
 				if XC.bootstrap > 1:
-					dx,dz = xloc_Tools.location_scatter(loc,bstrap_lat,bstrap_lon,bstrap_dep)
+					dx,dz = xloc_utils.location_scatter(loc,bstrap_lat,bstrap_lon,bstrap_dep)
 					loc.horizontal_scatter=dx
 					loc.vertical_scatter=dz
 					if XC.output > 0:
@@ -253,7 +296,7 @@ def XC_locate(win,XC):
 		####################################################
 		""" Done with bootstrap loop. Plot & interact """
 		if XC.plot and XC._num_processors==1:
-			from XC_loc.XC_plotting import XC_plot
+			from XC_loc.plotting_utils import XC_plot
 			""" set up some variables for plotting """
 			CC1=1-CCrm['C'][:,CCrm['indx'][0,:]!=CCrm['indx'][1,:]]
 			Nseis0=len(CCrm['st'])
@@ -320,7 +363,10 @@ class location(object):
 
 
 class event_list(object):
-	""" Define an events object, which is a list of location objects """
+	"""
+	Define an events object, which is a list of :class:`core.location` objects
+
+	"""
 
 	def __init__(self,events=[]):
 		self.events=events
@@ -329,38 +375,59 @@ class event_list(object):
 		return 'event_list object containing {:.0f} events'.format(len(self.events))
 
 	def get_lats(self):
-		""" Return numpy array of all location latitudes in the list """
+		""" 
+		Return numpy array of all location latitudes in the list
+
+		"""
 		lats=np.array([a.latitude for a in self.events])
 		return lats
 
 	def get_lons(self):
-		""" Return numpy array of all location longitudes in the list """
+		""" 
+		Return numpy array of all location longitudes in the list
+
+		"""
 		lons=np.array([a.longitude for a in self.events])
 		return lons
 
 	def get_depths(self):
-		""" Return numpy array of all location depths in the list """
+		""" 
+		Return numpy array of all location depths in the list 
+
+		"""
 		lons=np.array([a.depth for a in self.events])
 		return lons
 
 	def get_times(self):
-		""" Return two numpy arrays of all location window start and end times in the list """
+		""" 
+		Return two numpy arrays of all location window start and end times in the list 
+
+		"""
 		starttimes=np.array([a.starttime for a in self.events])
 		endtimes=np.array([a.endtime for a in self.events])
 		return starttimes, endtimes
 
 	def get_reduced_displacement(self):
-		""" Return all location reduced displacements in the events list as a numpy array """
+		""" 
+		Return all location reduced displacements in the events list as a numpy array 
+
+		"""
 		reduced_displacement=np.array([a.reduced_displacement for a in self.events])
 		return reduced_displacement
 
 	def get_numchannels(self):
-		""" Returns a numpy array of number of channels used in each location """
+		""" 
+		Returns a numpy array of number of channels used in each location 
+
+		"""
 		num=np.array([len(a.station_latlons()[0]) for a in self.events])
 		return num
 
 	def get_stations(self):
-		""" Return a list of all stations used in all locations in event list """
+		""" 
+		Return a list of all stations used in all locations in event list 
+
+		"""
 		stas=[]
 		for a in self.events:
 			for sta in a.channels:
@@ -368,12 +435,23 @@ class event_list(object):
 		return stas
 
 	def tolist(self):
+		"""
+		returns the attribute `events` as a list
+
+		"""
 		return self.events
 
 	def filter(self,min_t=None,max_t=None,min_lat=None,max_lat=None,min_lon=None,max_lon=None,min_horizontal_scatter=None,
 			   max_horizontal_scatter=None,min_depth=None,max_depth=None,min_rd=None,max_rd=None,min_vertical_scatter=None,
 			   max_vertical_scatter=None,min_num_channels=None,max_num_channels=None,highpass_loc=None,inplace=False):
-		""" Filter this event list by location properties and return a new event list object """
+		""" 
+		Filter this event list by location properties and return a new event list object 
+
+		Parameters
+		----------
+		Mostly self-explanatory
+
+		"""
 
 		NEW=self.copy()
 		NEW.events=np.array(NEW.events)
@@ -428,16 +506,24 @@ class event_list(object):
 			# return event_list(NEW.events.tolist())
 
 	def calc_reduced_displacement(self,st,XC,num_processors=1):
-		""" Method to calculate a reduced displacement for all locations in the events list. 
-			st             - Obspy Stream of data from which to calculate values
-			XC             - XCOR object used to obtain locations within the event list
-			num_processors - Optional integer to parallelize when set >1, but this doesn't appear to be faster
-			
-			The method updates the 'reduced_displacement' property in each location object. XC_loc can also do
-			this internally while generating a location, but the idea with this method is to apply the calculation
-			after obtaining all initial locations and throwing out bad locations via clustering or maximum horizontal
-			scatter. That way you are spending computation time for events you won't ever use.
-	    """
+		""" 
+		Method to calculate a reduced displacement for all locations in the events list.
+		The method updates the `reduced_displacement` property in each location object. `XCOR` can also do
+		this internally while generating a location, but the idea with this method is to apply the calculation
+		after obtaining all initial locations and throwing out bad locations via clustering or maximum horizontal
+		scatter. That way you are not spending computation time for events you will never use.
+
+		Parameters
+		----------
+	
+		st : stream, required
+			Obspy stream of envelopes. Each trace must have stats.coordinates.latitude/longitude
+		XC : `XCOR` object, required
+			`XCOR` object used to obtain locations within the event list
+		num_processors : int, optional
+			Optional integer to parallelize when set >1, but this doesn't appear to be faster. Default = 1.
+		
+		"""
 		if num_processors > 1:
 			from multiprocessing import Pool
 			pool = Pool(processes=num_processors)
@@ -445,7 +531,7 @@ class event_list(object):
 			for l in self.events:
 				if not np.isnan(l.latitude):
 					new_windows.append(l)
-			results=[pool.apply_async(xloc_Tools.reduced_displacement,args=(win,XC,st.slice(win.starttime,win.endtime))) for win in new_windows]
+			results=[pool.apply_async(xloc_utils.reduced_displacement,args=(win,XC,st.slice(win.starttime,win.endtime))) for win in new_windows]
 			pool.close()
 			pool.join()
 			RD=[p.get() for p in results]
@@ -456,18 +542,26 @@ class event_list(object):
 		else:
 			for l in self.events:
 				if not np.isnan(l.latitude):
-					l.reduced_displacement=xloc_Tools.reduced_displacement(l,XC,st.slice(l.starttime,l.endtime))
+					l.reduced_displacement=xloc_utils.reduced_displacement(l,XC,st.slice(l.starttime,l.endtime))
 
 	def remove(self,max_scatter=3.0,rm_nan_loc=True,rm_nan_err=True,inplace=False):
-		""" Method to remove locations from the 'detections' event list. Returns a new copy.
+		"""
+		Method to remove locations from the event list. Returns a new copy.
 
-		    max_scatter - maximum horizontal scatter allowed for a give location
-		    rm_nan_loc  - if 'True', will remove all locations with NaN locations
-		    rm_nan_err  - if 'True', will remove all locations with NaN horizontal_scatter
-		                  (not appropriate if not bootstrapping to obtain horizontal_scatter,
-		                   eg. bootstrap=1)
-			inplace     - boolean flag to operate in place (True) or return a copy (False,default) 
-		""" 
+		Parameters
+		----------
+
+		max_scatter : float, optional
+			maximum horizontal scatter allowed for a give locationDefault = 3.0
+		rm_nan_loc : boolean, optional
+			`True` will remove all locations with `nan` locations. Default = `True`
+		rm_nan_err : boolean, optional
+			  `True` will remove all locations with nan horizontal_scatter (not appropriate 
+			  if not bootstrapping to obtain horizontal_scatter, eg. bootstrap=1), Default = `True`
+		inplace : boolean, optional
+			`True` to operate in place. `False` to return a copy. Default = `False`
+		
+		"""
 
 		errs=np.array([a.horizontal_scatter for a in self.events])
 		IND=np.arange(len(errs)).tolist()
@@ -496,6 +590,17 @@ class event_list(object):
 
 
 	def remove_highpass(self,inplace=False):
+		"""
+		Method to remove locations that also have a location with a highpass filter
+		
+		Parameters
+		----------
+		
+		inplace : boolean, optional
+			`True` to operate in place or `False` to return a copy. Default = `False`
+
+		"""
+
 		NEW=self.copy()
 		NEW.events=np.array(NEW.events)
 		vals=np.array([l.highpass_loc for l in self.events])
@@ -507,10 +612,18 @@ class event_list(object):
 
 
 	def remove_duplicates(self,distance=25.0,inplace=False):
-		""" Method to remove locations within a list that have identical starttimes
-		    distance - maximum horizontal distance (km) below which the locations of events 
-		               with identical starttimes are averaged
-		    inplace  - boolean flag to operate in place (True) or return a copy (False,default) 
+		"""
+		Method to remove locations within a list that have identical starttimes
+		
+		Parameters
+		----------
+		
+		distance : float, optional
+			maximum horizontal distance (km) below which the locations of events 
+			with identical starttimes are averaged. Default = 25.0.
+		inplace : boolean, optional
+			`True` to operate in place or `False` to return a copy. Default = `False`
+		
 		"""
 		T = self.get_times()[0]
 		idx_sort = np.argsort(T)
@@ -550,11 +663,52 @@ class event_list(object):
 			return event_list(events)
 
 
-	def cluster(self,dx=10,dt=120,num_events=4):
+	def cluster(self,dx=10,dt=60,num_events=4):
+		""" 
+		Cluster locations in the event_list using :meth:`sklearn.cluster.DBSCAN` 
+
+		Parameters
+		----------
+
+		dx : float, optional
+			Maximum horizontal distance in km. Default = 10.0
+		dt : float, optional
+		 	Maximum time difference between detections, in minutes. Default = 60
+		num_events : int, optional
+			Number of events required within `dx` and `dt`. Default = 4.
+
+
+		The method returns a :class:`core.detections` object, which contains various different lists as attributes: 
+
+		* detections - events from original event list
+		* core_clustered - events who all meet the criteria
+		* edge_clustered - events within `dx` & `dt` distance of core_clustered' event, but don't themselves have `num_events` within `dx` & `dt` of them
+		* noise          - events that don't meet either criteria above
+		* all_clustered  - core_clustered + edge_clustered combined for convenience 
+
+		"""
 		det=detections(self.events)
 		det.cluster(dx=dx,dt=dt,num_events=num_events)
 		return det
 
+
+	def plot_locations(self,XC):
+		"""
+		Method to plot the locations for this `event_list`
+
+		Parameters
+		----------
+
+		XC : `XCOR` object, required
+			`XCOR` object used to create `event_list` object
+
+		"""
+
+		from XC_loc.plotting_utils import plot_locations
+		
+		plot_locations(self,XC)
+
+		return
 
 	def __add__(self,other):
 		return event_list(self.events+other.events)
@@ -565,10 +719,12 @@ class event_list(object):
 
 
 class detections(object):
-	""" 'detections' object. Contains different 'event_list' objects as properties. This
-	    object allows for lists all events, clustered events, and unclustered events to 
-	    exist all in one place and be modified using the same class methods.
-    """
+	""" 
+	`detections` object. Contains different 'event_list' objects as properties. This
+	object allows for lists all events, clustered events, and unclustered events to 
+	exist all in one place and be modified using the same class methods.
+
+	"""
 
 	def __init__(self,detects=[]):
 		if detects.__class__.__name__=='list':
@@ -589,8 +745,15 @@ class detections(object):
 	def filter(self,min_t=None,max_t=None,min_lat=None,max_lat=None,min_lon=None,max_lon=None,min_horizontal_scatter=None,
 		   max_horizontal_scatter=None,min_depth=None,max_depth=None,min_rd=None,max_rd=None,min_vertical_scatter=None,
 		   max_vertical_scatter=None,min_num_channels=None,max_num_channels=None):
-		""" Filter each event_list in the detections object by location properties and return a new detections object
-			with modified event_lists """
+		"""
+		Filter each event_list in the detections object by location properties and return a new detections object
+		with modified event_lists
+
+		Parameters
+		----------
+		Mostly self-explanatory
+
+		"""
 		NEW=self.copy()
 		a=NEW.__dict__.keys()
 		for item in a:
@@ -602,20 +765,29 @@ class detections(object):
 
 
 	def cluster(self,dx=25,dt=None,num_events=4):
-		""" Cluster locations in the 'detections' event_list using 'DBSCAN'. 
-		    dx          - the maximum horizontal distance in km
-		    dt			- the maximum time difference between detections
-		    num_events  - number of events required to meet the distance criteria
+		""" 
+		Cluster locations in the 'detections' event_list using :meth:`sklearn.cluster.DBSCAN` 
 
-		    The method leaves the 'detections' event_list untouched, but adds additional 
-		    event_list properties in place: 
-		    core_clustered - events who all meet the criteria
-		    edge_clustered - events within 'eps' distance of 'core_clustered' event, but
-		                     don't themselves have num_events within 'eps' distance
-		                     of them
-		    noise          - events that don't meet either criteria above
-		    all_clustered  - core_clustered + edge_clustered combined for convenience 
-	    """
+		Parameters
+		----------
+
+		dx : float, optional
+			Maximum horizontal distance in km. Default = 25.0
+		dt : float, optional
+		 	Maximum time difference between detections, in minutes. Default = `None`
+		num_events : int, optional
+			Number of events required within `dx` and `dt`. Default = 4.
+
+
+		The method leaves the 'detections' `event_list` untouched, but adds additional 
+		event_list properties in place: 
+
+		* core_clustered - events who all meet the criteria
+		* edge_clustered - events within `dx` & `dt` distance of core_clustered' event, but don't themselves have `num_events` within `dx` & `dt` of them
+		* noise          - events that don't meet either criteria above
+		* all_clustered  - core_clustered + edge_clustered combined for convenience 
+
+		"""
 
 		from sklearn.cluster import DBSCAN
 		x,y = latlon2xy(self)
@@ -656,22 +828,33 @@ class detections(object):
 		self.noise=event_list(tmp)
 
 	def uncluster(self):
-		""" Method to remove all event lists not named 'detections'. Operates in place. """
+		""" 
+		Method to remove all event lists not named 'detections'. Operates in place.
+
+		"""
 		a=self.__dict__.keys()
 		for item in a:
 			if item != 'detections':
 				self.__delattr__(item)
 
 	def remove(self,max_scatter=3.0,rm_nan_loc=True,rm_nan_err=True,inplace=False):
-		""" Method to remove locations from the 'detections' event list. Returns a new copy.
+		"""
+		Method to remove locations from the 'detections' event list. Returns a new copy.
 
-		    max_scatter - maximum horizontal scatter allowed for a give location
-		    rm_nan_loc  - if 'True', will remove all locations with NaN locations
-		    rm_nan_err  - if 'True', will remove all locations with NaN horizontal_scatter
-		                  (not appropriate if not bootstrapping to obtain horizontal_scatter,
-		                   eg. bootstrap=1)
-			inplace     - boolean flag to operate in place (True) or return a copy (False,default) 
-		""" 
+		Parameters
+		----------
+
+		max_scatter : float, optional
+			maximum horizontal scatter allowed for a give locationDefault = 3.0
+		rm_nan_loc : boolean, optional
+			`True` will remove all locations with `nan` locations. Default = `True`
+		rm_nan_err : boolean, optional
+			  `True` will remove all locations with nan horizontal_scatter (not appropriate 
+			  if not bootstrapping to obtain horizontal_scatter, eg. bootstrap=1), Default = `True`
+		inplace : boolean, optional
+			`True` to operate in place. `False` to return a copy. Default = `False`
+		
+		"""
 
 		NEW = self.copy()
 		for item in NEW.__dict__.keys():
@@ -683,10 +866,18 @@ class detections(object):
 			return NEW
 
 	def remove_duplicates(self,distance=25.0,inplace=False):
-		""" Method to remove locations within a list that have identical starttimes
-		    distance - maximum horizontal distance (km) below which the locations of events 
-		               with identical starttimes are averaged
-		    inplace  - boolean flag to operate in place (True) or return a copy (False,default) 
+		"""
+		Method to remove locations within a list that have identical starttimes
+
+		Parameters
+		----------
+
+		distance : float, optional
+			maximum horizontal distance (km) below which the locations of events with 
+			identical starttimes are averaged. Default = 25.0.
+		inplace : boolean, optional
+			`True` to operate in place or `False` to return a copy. Default = `False`
+		
 		"""
 
 		NEW = self.copy()
@@ -697,6 +888,24 @@ class detections(object):
 				setattr(self,item,NEW.__getattribute__(item))
 		else:
 			return NEW
+
+	def plot_locations(self,XC):
+		"""
+		Method to plot the locations from each `event_list`
+
+		Parameters
+		----------
+
+		XC : `XCOR` object, required
+			`XCOR` object used to create `detections` object
+
+		"""
+
+		from XC_loc.plotting_utils import plot_locations
+		
+		plot_locations(self,XC)
+
+		return
 
 	def __add__(self,other):
 		NEW = self.copy()
@@ -710,96 +919,145 @@ class detections(object):
 
 
 class XCOR(object):
-	""" XCOR is the main class object that needs to be set up in order to get a location.
-		Most of the paramater will self-assign, and in many cases that is fine. The only
-		essential variable is the obspy stream 'st', but you will likely want to give thought
-		and care to the grid and velocity model.
 
-		Parameters:
-		----------
-		
-		st : Obspy stream, required
-			Each trace must have stats.coordinates.latitude/longitude
-		model : Obspy taup model or model file from which to calculate travel times
-			If this is not provided, a default file will be called.
-		model_dir : Directory where model.npz file is place by obspy's taup program
-			If not provided, it will default to within the XC_loc module directory
-		grid_size : A dict with keys 'lats', 'lons', and 'deps'
-			each of which are 1D monotonic numpy arrays. If unprovided, this will be designed based on
-			the extent of the input stations.
-		detrend        - Boolean to force a demean on st or not. Default = True
-		regrid         - Boolean to reinterpolate location on finer grid. Default = True
-		phase_types    - list of phases for which to calculate travel times. Ultimate travel time
-					     used for each grid node for each station will be the minimum calculated
-					     from the phases in the list provided. Defaults to ['s','S']. Also accepts
-					     ['Nkmps'] where N is a constant velocity in km/s. This would be useful for
-					     inputing a surface wave velocity, for example.
-					     See obspy taup documentation for more details on phase nomenclature.
-		normType       - Integer 1 or 2 to use an L1 or L2 norm. Default = 1
-		plot		   - Boolean flag to plot or not. Default = True.
-		interact       - Boolean flag to interact with plot or not. Default = True
-		map_resolution - Character to define matplotlib's Basemap resolution. Options are:
-						 c' (crude),'l' (low),'i' (intermediate),'h' (high) or 'f' (full)
-						 Default='h'
-		output		   - Interger from 0-2 controlling increasing level of messages the code produces
-						 Default = 1
-		Cmin 		   - Minimum normalized cross-correlation coefficient to be considered. Default = 0.5
-		Cmax    	   - Maximum normalized cross-correlation coefficient to be considered. Not always 
-						 necessary, but could be for removing correlated noise spikes, for example.
-						 Default = 0.995
-		sta_min		   - Minimum number of stations needed to obtain a location. Default = 3
-		dx_min         - Minimum horizontal distance (km) between channels required to consider the
-						 cross-correlation. Useful to exclude correlations between multiple channels
-						 at the same station. Default = 0.1
-		bootstrap      - Number of iterations for each location. For each iteration, 'bootstrap_prct'
-						 of the CC values will be zeroed out, and the resulting station contributions
-						 are adjusted accordingly to obtain a new location. These iterated locations
-						 provide a measure of location scatter, which is recorded in the location object.
-						 The final location will use all of the data (no CC values zeroed out). Thus,
-						 if boootstrap=N, it will bootstrap N times and get a location using all the data
-						 on the N+1 iteration. If bootstrap==1, the data are only located once with all the
-						 data, and no horizontal scatter is estimated. Default = 1
-		bootstrap_prct - Value between 0 and 1 determining the fraction of cc data to throw out in each
-						 bootstrap iteration. Default = 0.04 (4%)
-		lookup_type	   - Type of interpolation method to use when getting a predicted cross-correlation
-						 value for each channel pair for each grid ('linear', 'nearest', 'zero', 'slinear', 
-						 'quadratic', 'cubic'). See scipy.interpolate.interp1d for details. Default='cubic'
-		rotation	   - dictionary defining desired rotated grid. Needs keys 'x' (x grid nodes), 'y' 
-						 (y grid nodes), 'z' (depth grid nodes), 'lat0' & 'lon0' (origin lat/lon),
-						 'az', rotation azimuth (counterclockwise from East)
-		dTmax_s		   - Maximum cross-correlation shift in seconds. Defaults to the smaller of:
-							a) 1/2 of the obspy stream window length
-							b) the maximum predicted inter-station differential time + 'dt'
-		dt 			   - Seconds of additional allowed cross-correlation shifts beyond the maximum
-						 predicted interchannel differential time. Default = 3.0
-		rd_freq		   - Frequency at which to calculate surface wave reduced displacement using the
-						 velocity from the top layer of the velocity model. If not set, body wave reduced 
-						 displacement will be calculated. Default = None
-		raw_traces	   - Obpsy stream of non-envelope traces matching the input 'st' variable. Used to
-						 calculate reduced displacement. Default = []
-		env_hp		   - Obspy stream of second envelopes with traces matchin the input 'st' variable.
-						 This would typically be envelopes generated in a different passband than 'st'.
-						 If a location is obtained for st, it will also check env_hp and set a flag.
-						 This can be useful for weeding out earthquake detections or correlated noise
-						 spikes when you are only interested in detecting a band-limited signal. It
-						 essentially gives you a way to flag windows where you have coherent energy in
-						 two different passbands. Kind of a niche-use case, but necessary for my needs.
-						 Default = []
-		edge_control   - Value between 0 and 1 defining a percentage from the window edge to not allow
-						 the peak trace energy. That is, if any trace's peak amplitude occurs between a
-						 with a percentage of the window edge, it is removed. Useful when autolocating.
-						 Default = 0.03
-		num_processors - Number of processors to use if you are iterating through sliding windows to 
-						 get locations. This can also be set in the locate() method. Default = 1.
-		tt_file   	   - Path to a .npz file containing pre-calculated traveltimes for this station set
-						 on this grid. Calulated using save_traveltimes() method.
-		waveform_loc   - Boolean flag to optionally locate waveforms rather than envelopes. Default = False
-						 This flag exists to bypass some of the built in envelope quailty control	
-		gap_value      - Value used to flag data gaps identified in preprocessing. Default = -123454321				 
+	"""
+	XCOR is the main class object that needs to be set up in order to get a location.
+	Most of the paramaters will self-assign, and in many cases that is fine. The only
+	essential variable is the obspy stream 'st', but you will likely want to give thought
+	and care to the grid and velocity model.
+	
+	Parameters
+	----------
+	
+	st : stream, required
+		Obspy stream of envelopes. Each trace must have stats.coordinates.latitude/longitude
+	model : str, optional
+		Obspy taup model or model file from which to calculate travel times.
+		If this is not provided, a default file will be called.
+	model_dir : str, optional
+		Directory where model.npz file is place by obspy's taup program
+		If not provided, it will default to within the XC_loc module directory
+	grid_size : dict, optional
+		A dict with keys 'lats', 'lons', and 'deps' each of which are 1D monotonic numpy arrays. 
+		If unprovided, this will be created internally based on the extent of the input stations.
+	detrend : boolean, optional
+		True/False to force a demean on obspy stream `st` or not.
+		Default = `True`
+	regrid : boolean, optional
+		Whether to reinterpolate location on finer grid.
+		Default = `True`
+	phase_types : list, optional
+		list of phases for which to calculate travel times. Ultimate travel time
+		used for each grid node for each station will be the minimum calculated
+		from the phases in the list provided. Also accepts ['Nkmps'] where N is a 
+		constant velocity in km/s. This would be useful for inputing a surface wave 
+		velocity, for example. See obspy taup documentation for more details on phase 
+		nomenclature.
+		Default = [ 's', 'S' ]
+	normType : int, optional
+		Integer 1 or 2 to use an L1 or L2 norm.
+		Default = 1
+	plot : boolean, optional
+		Boolean flag to plot or not.
+		Default = `True`
+	interact : boolean, optional
+		Boolean flag to interact with plot or not.
+		Default = `True`
+	output : int, optional
+		Interger from 0-3 controlling increasing level of messages the code produces
+		Default = 1
+	Cmin : float, optional
+		Minimum normalized cross-correlation coefficient to be considered.
+		Default = 0.5
+	Cmax : float, optional
+		Maximum normalized cross-correlation coefficient to be considered. Not always 
+		necessary, but could be for removing correlated noise spikes, for example.
+		Default = 0.995
+	sta_min : int, optional
+		Minimum number of stations needed to obtain a location.
+		Default = 3
+	dx_min : float, optional
+		Minimum horizontal distance (km) between channels required to consider th
+		cross-correlation. Useful to exclude correlations between multiple channels
+		at the same station.
+		Default = 0.1
+	bootstrap : int, optional
+		Number of iterations for each location. For each iteration, 'bootstrap_prct'
+		of the CC values will be zeroed out, and the resulting station contributions
+		are adjusted accordingly to obtain a new location. These iterated locations
+		provide a measure of location scatter, which is recorded in the location object.
+		The final location will use all of the data (no CC values zeroed out). Thus,
+		if boootstrap=N, it will bootstrap N times and get a location using all the data
+		on the N+1 iteration. If bootstrap==1, the data are only located once with all the
+		data, and no horizontal scatter is estimated.
+		Default = 1
+	bootstrap_prct : float, optional
+		Value between 0 and 1 determining the fraction of cc data to throw out in each
+		bootstrap iteration.
+		Default = 0.04 (4%)
+	lookup_type : str, optional
+		Type of interpolation method to use when getting a predicted cross-correlation
+		value for each channel pair for each grid ('linear', 'nearest', 'zero', 'slinear', 
+		'quadratic', 'cubic'). See scipy.interpolate.interp1d for details.
+		Default='cubic'
+	rotation : dict, optinal
+		Dictionary defining desired rotated grid. Needs keys 'x' (x grid nodes), 
+		'y' (y grid nodes), 'z' (depth grid nodes), 'lat0' & 'lon0' (origin lat/lon),
+		'az', rotation azimuth (counterclockwise from East)
+		Default = `None`
+	dTmax_s : float, optional
+		Maximum cross-correlation shift in seconds. Defaults to the smaller of:
+			a) 1/2 of the obspy stream window length
+			b) the maximum predicted inter-station differential time + `dt`
+	dt : float, optional
+		Seconds of additional allowed cross-correlation shifts beyond the maximumpredicted 
+		interchannel differential time. 
+		Default = 3.0
+	rd_freq	: float, optional
+		Frequency at which to calculate surface wave reduced displacement using the
+		velocity from the top layer of the velocity model. If not set, body wave reduced 
+		displacement will be calculated.
+		Default = `None`
+	raw_traces : stream, optional
+		Obpsy stream of non-envelope traces matching the input `st` variable. Used to
+		calculate reduced displacement.
+		Default = `[]`
+	env_hp : stream, optional
+		Obspy stream of second envelopes with traces matchin the input `st` variable.
+		This would typically be envelopes generated in a different passband than `st`.
+		If a location is obtained for st, it will also check env_hp and set a flag.
+		This can be useful for weeding out earthquake detections or correlated noise
+		spikes when you are only interested in detecting a band-limited signal. It
+		essentially gives you a way to flag windows where you have coherent energy in
+		two different passbands. Kind of a niche-use case, but necessary for my needs.
+		Default = `[]`
+	edge_control : float, optional
+		Value between 0 and 1 defining a percentage from the window edge to not allow
+		the peak trace energy. That is, if any trace's peak amplitude occurs between a
+		with a percentage of the window edge, it is removed. Useful when autolocating.
+		Default = 0.03
+	num_processors : int, optional
+		Number of processors to use if you are iterating through sliding windows to 
+		get locations. This can also be set in the `locate()` method.
+		Default = 1.
+	tt_file : str, optional
+		Path to a .npz file containing pre-calculated traveltimes for this station set
+		on this grid. Calulated using `save_traveltimes()` method.
+		Default = `None`
+	waveform_loc : boolean, optional
+		Boolean flag to optionally locate waveforms rather than envelopes.
+		This flag exists to bypass some of the built in envelope quailty control	
+		Default = `False`
+	gap_value : int, optional
+		Value used to flag data gaps identified in preprocessing.
+		Default = -123454321
+
+	return : object
+
 	"""
 
 	def __init__(self,st,model=None,grid_size=None,detrend=True,regrid=False,phase_types=['s','S'],
-				 	     normType=1,plot=True,interact=True,map_resolution='h',output=1,
+				 	     normType=1,plot=True,interact=True,output=1,
 				 	     Cmin=0.5,Cmax=0.995,sta_min=3,dx_min=0.1,dt=3.0,bootstrap=1,
 				 	     bootstrap_prct=0.04,lookup_type='cubic',rotation=None,dTmax_s=None,
 				 	     rd_freq=None,raw_traces=[],env_hp=[],edge_control=0.03,num_processors=1,
@@ -838,7 +1096,6 @@ class XCOR(object):
 					self.grid_size=dict({'x':self.rotation['x'],'y':self.rotation['y'],'deps':self.rotation['z']})
 				else:
 					self.grid_size=dict({'lats':[],'lons':[],'deps':[]})
-					from obspy.geodetics.base import gps2dist_azimuth
 
 					print('Warning!  No grid provided.')
 					print('Making grid based on stations provided...')
@@ -852,7 +1109,7 @@ class XCOR(object):
 					tmp = gps2dist_azimuth(self.grid_size['lats'].max(),self.grid_size['lons'].max(),
 										   self.grid_size['lats'].min(),self.grid_size['lons'].min())
 					max_depth = np.min([tmp[0]/1000, 60.])
-					self.grid_size['deps'] = np.linspace(0.5,max_depth,10)
+					self.grid_size['deps'] = np.linspace(0,max_depth,10)
 
 			self.calculate_traveltimes()
 
@@ -875,7 +1132,6 @@ class XCOR(object):
 		if not self.plot:
 			self.interact = False
 		
-		self.map_resolution  = map_resolution
 		self._p          = np.array([4.9650, -18.9378, 26.7329, -16.5927, 3.8438]) # weight polynomial coefficients
 		self.Cmin        = Cmin
 		self._Cmax       = Cmax
@@ -902,7 +1158,7 @@ class XCOR(object):
 			self.dTmax_s     = dTmax_s
 		else:
 			seconds=[(tr.stats.npts-1)/tr.stats.sampling_rate for tr in st]
-			self.dTmax_s = np.min([.5*np.min(seconds),xcorr_Tools.station_distances(st).max()/self._v0+self._dt])
+			self.dTmax_s = np.min([.5*np.min(seconds),xcorr_utils.station_distances(st).max()/self._v0+self._dt])
 
 		dTmax 	= np.round(float(self.dTmax_s)*self.traces[0].stats.sampling_rate)	# can't make a total shift of more than dTmax samples	
 		# self._mlag         = int(2*dTmax) # change on 0ct-30-2017
@@ -933,7 +1189,11 @@ class XCOR(object):
 
 
 	def calculate_traveltimes(self):
-		""" Calculate travel times based on the model and grid provided in the XCOR object """
+		"""
+		Calculate travel times based on the model and grid provided in the `XCOR` object
+
+		"""
+
 		if 'default_vel_model' in self._model_file:
 			try:
 				self.model = TauPyModel(model=self._model_dir+'/default_vel_model')
@@ -952,7 +1212,7 @@ class XCOR(object):
 
 		self._grid=dict({'LON':[],'LAT':[],'DEP':[]})
 		if self.rotation:
-			self._grid['LON'],self._grid['LAT'],self._grid['DEP'] = xloc_Tools.create_rotated_grid(self.rotation)
+			self._grid['LON'],self._grid['LAT'],self._grid['DEP'] = xloc_utils.create_rotated_grid(self.rotation)
 		else:
 			self._grid['LON'],self._grid['LAT'],self._grid['DEP'] = np.meshgrid(self.grid_size['lons'],self.grid_size['lats'],self.grid_size['deps'])
 
@@ -993,7 +1253,13 @@ class XCOR(object):
 
 			TIMES=[]
 			for x in DEGS:
-				PATHS=self.model.get_ray_paths(source_depth_in_km=z,distance_in_degree=x,receiver_depth_in_km=0,phase_list=self.phase_types)
+				try:
+					PATHS=self.model.get_ray_paths(source_depth_in_km=z,distance_in_degree=x,receiver_depth_in_km=0,phase_list=self.phase_types)
+				except:
+					# an error can occur when a grid node is on a velocity model boundary. When this occurs, add a slight deviation to make sure
+					# get_ray_paths runs correctly
+					small_perturbation=0.00001
+					PATHS=self.model.get_ray_paths(source_depth_in_km=z+small_perturbation,distance_in_degree=x,receiver_depth_in_km=0,phase_list=self.phase_types)
 				if self.output > 2:
 					print(self.phase_types)
 					print(PATHS)
@@ -1012,35 +1278,17 @@ class XCOR(object):
 		print('\n')
 
 
-	def load_traveltimes(self,file):
-		""" Load an .npz file containing a model and grid, and assign the appropriate times
-			to each trace in the object. The .npz file can be created initially using the
-			save_traveltimes() method after XCOR has run calculate_traveltimes() with a model and grid.
-		"""
-		npzfile=np.load(file)
-		self._grid=dict({'LON':[],'LAT':[],'DEP':[]})
-		if self.rotation:
-			self.grid_size={'x'   :npzfile['x'],
-							'y'   :npzfile['y'],
-							'deps':npzfile['deps']}
-			self._grid['LON'],self._grid['LAT'],self._grid['DEP'] = xloc_Tools.create_rotated_grid(self.rotation)
-		else:
-			self.grid_size={'lons':npzfile['lons'],
-							'lats':npzfile['lats'],
-							'deps':npzfile['deps']}
-			self._grid['LON'],self._grid['LAT'],self._grid['DEP'] = np.meshgrid(self.grid_size['lons'],self.grid_size['lats'],self.grid_size['deps'])
-		self._model_layers=npzfile['model']
-		self.phase_types=npzfile['phase_types'].tolist()
-		for tr in self.traces:
-			tr.TT=npzfile[tr.id.replace('.','_')]
-			if np.shape(tr.TT)!=np.shape(self._grid['LON']):
-				print('Error loading file. Dimension mismatch for station '+tr.id)				
-
-
 	def save_traveltimes(self,outfile):
-		""" Save an .npz file containing the model and grid. The variables should be created 
-			using the calculate_traveltimes(), which is done internally method when initiating an
-			XCOR object with a model and grid.
+		"""
+		Save an .npz file containing the model and grid. The variables should be created 
+		using the `calculate_traveltimes()` method, which is called internally  when initiating
+		an XCOR object with a model and grid.
+
+		Parameters
+		----------
+		file : str, required
+			The .npz file you wish to save, ideally with full path provided.
+		
 		"""
 
 		model = self.model.model.s_mod.v_mod.layers
@@ -1064,28 +1312,79 @@ class XCOR(object):
 			np.savez(outfile,lats=lats,lons=lons,deps=deps,model=model,phase_types=phase_types,stations=stas,**stas)
 
 
+	def load_traveltimes(self,file):
+		""" 
+		Load an .npz file containing a model and grid, and assign the appropriate times
+		to each trace in the object. The .npz file can be created initially using the
+		`save_traveltimes()` method after `XCOR` has run `calculate_traveltimes()` with a model and grid.
+
+		Parameters
+		----------
+		file : str, required
+			The path/filename to the .npz file you wish to load
+
+		"""
+		npzfile=np.load(file)
+		self._grid=dict({'LON':[],'LAT':[],'DEP':[]})
+		if self.rotation:
+			self.grid_size={'x'   :npzfile['x'],
+							'y'   :npzfile['y'],
+							'deps':npzfile['deps']}
+			self._grid['LON'],self._grid['LAT'],self._grid['DEP'] = xloc_utils.create_rotated_grid(self.rotation)
+		else:
+			self.grid_size={'lons':npzfile['lons'],
+							'lats':npzfile['lats'],
+							'deps':npzfile['deps']}
+			self._grid['LON'],self._grid['LAT'],self._grid['DEP'] = np.meshgrid(self.grid_size['lons'],self.grid_size['lats'],self.grid_size['deps'])
+		self._model_layers=npzfile['model']
+		self.phase_types=npzfile['phase_types'].tolist()
+		for tr in self.traces:
+			tr.TT=npzfile[tr.id.replace('.','_')]
+			if np.shape(tr.TT)!=np.shape(self._grid['LON']):
+				print('Error loading file. Dimension mismatch for station '+tr.id)
+
+
 	def locate(self,window_length=None,step=None,offset=0, include_partial_windows=False, nearest_sample=True, dTmax_s=None,num_processors=None):
-		""" Main location method.
-			If using this to locate a single window of data, simply call locate() with no input parameters.
-			All of the relevant details (plot, interact, map_resolution) are properties set in the initial
-			object creation.
+		""" 
+		Main method to locate data provided. This method is actually a wrapper to call main envelope 
+		cross correlation location algorithm `XC_locate`.
+		
+		If using this to locate a single window of data, simply call locate() with no input parameters.
+		All of the relevant details (plot, interact, map_resolution) are properties set in the initial
+		object creation. If using this to iterate over windows and locate, the following parameters must be set:
 
-			If using this to iterate over windows and locate, the following parameters must be set:
+		Parameters
+		----------
+		window_length : float, optional
+			Length of each sub-window in seconds.
+			Default = `None`
+		step : float, optional
+			The step between the start times of two successive windows in seconds. Can be negative if an offset is given.
+			Default = `None`
 
-			window_length			- Length of each sub-window in seconds.
-			step					- The step between the start times of two successive windows in seconds. Can be negative if an offset is given.
 
-			These parameters are optional:
-			offset					- The offset of the first window in seconds relative to the start time of the whole interval.
-			include_partial_windows - Determines if sub-windows that are shorter then 99.9 % of the desired length are returned.
-			nearest_sample			- If set to True, the closest sample is selected, if set to False, the inner (next sample for a 
-									  start time border, previous sample for an end time border) sample containing the time is selected. 
-									  Defaults to True.
-			dTmax_s					- Maximum cross-correlation shift in seconds. Defaults to the smaller of:
-										a) 1/2 of the obspy stream sub-window length
-										b) the maximum predicted inter-station differential time + 'dt', set during initial object creation
-			num_processors			- Number of processors to use in parallel
-			
+		These parameters are optional:
+
+		Parameters
+		----------
+		offset : float, optional
+			The offset of the first window in seconds relative to the start time of the whole interval.
+			Default = `False`
+		include_partial_windows : boolean, optional
+			Determines if sub-windows that are shorter then 99.9 % of the desired length are returned.
+			Default = `False`
+		nearest_sample : boolean, optional
+			If set to True, the closest sample is selected, if set to False, the inner (next sample for a 
+			start time border, previous sample for an end time border) sample containing the time is selected.
+			Default = `True`
+		dTmax_s : float, optional
+			Maximum cross-correlation shift in seconds. Defaults to the smaller of:
+				a) 1/2 of the obspy stream sub-window length
+				b) the maximum predicted inter-station differential time + 'dt', set during initial object creation
+		num_processors : int, optional
+			Number of processors to use in parallel
+			Default = `None`
+
 		"""
 		if num_processors:
 			self._num_processors=num_processors
@@ -1102,7 +1401,7 @@ class XCOR(object):
 			if dTmax_s:
 				self.dTmax_s = dTmax_s
 			else:
-				self.dTmax_s = np.min([.5*window_length,xcorr_Tools.station_distances(self.traces).max()/self._v0+self._dt])
+				self.dTmax_s = np.min([.5*window_length,xcorr_utils.station_distances(self.traces).max()/self._v0+self._dt])
 
 			dTmax 	   = np.round(float(self.dTmax_s)*self.traces[0].stats.sampling_rate)	# can't make a total shift of more than dTmax samples	
 			# self._mlag         = int(2*dTmax) # change on 0ct-30-2017
@@ -1178,7 +1477,7 @@ class XCOR(object):
 							new_windows.append((windows[i],l))
 					if self.output > 0:
 						print('Calculating reduced displacement for {:.0f} locations'.format(len(new_windows)))
-					results=[pool.apply_async(xloc_Tools.reduced_displacement,args=(win[1],self,raw_traces.slice(win[0][0],win[0][1]))) for win in new_windows]
+					results=[pool.apply_async(xloc_utils.reduced_displacement,args=(win[1],self,raw_traces.slice(win[0][0],win[0][1]))) for win in new_windows]
 					pool.close()
 					pool.join()
 					RD=[p.get() for p in results]
@@ -1218,7 +1517,7 @@ class XCOR(object):
 							new_windows.append((windows[i],l))
 					if self.output > 0:
 						print('Calculating reduced displacement for {:.0f} locations'.format(len(new_windows)))
-					RD=[xloc_Tools.reduced_displacement(win[1],self,raw_traces.slice(win[0][0],win[0][1])) for win in new_windows]
+					RD=[xloc_utils.reduced_displacement(win[1],self,raw_traces.slice(win[0][0],win[0][1])) for win in new_windows]
 					if not env_hp:
 						times=np.array(loc.get_times()[0])
 					for i,rd in enumerate(RD):
@@ -1233,3 +1532,8 @@ class XCOR(object):
 				self.regrid    = tmp_regrid
 
 		return loc
+
+
+	def plot_grid(self):
+		from  XC_loc import plotting_utils
+		plotting_utils.grid_plot(self)
