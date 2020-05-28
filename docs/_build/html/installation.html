@@ -1,0 +1,260 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>2. enveloc Installation &mdash; XC_loc 1.0.6 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="3. Usage overview" href="setup.html" />
+    <link rel="prev" title="1. Introduction" href="intro.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> XC_loc
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">1. Introduction</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">2. enveloc Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#python-version">2.1. Python Version</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#dependencies">2.2. Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#notes">2.3. Notes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="setup.html">3. Usage overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">4. Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="output.html">5. Output</a></li>
+<li class="toctree-l1"><a class="reference internal" href="xcor.html">6. <em>XCOR</em> object</a></li>
+<li class="toctree-l1"><a class="reference internal" href="event_list.html">7. <em>event_list</em> object</a></li>
+<li class="toctree-l1"><a class="reference internal" href="detections.html">8. <em>detections</em> object</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">XC_loc</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li><span class="section-number">2. </span>enveloc Installation</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/installation.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="enveloc-installation">
+<h1><span class="section-number">2. </span>enveloc Installation<a class="headerlink" href="#enveloc-installation" title="Permalink to this headline">¶</a></h1>
+<p><em>enveloc</em> is availabe on <a href="https://github.com/awech/enveloc" target="_blank">github</a> and as a repository on <a href="https://pypi.org/project/enveloc/" target="_blank">PyPI</a>.</p>
+<p>I strongly recommend installing <em>enveloc</em> using conda because this will:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>Simplify the install</p></li>
+<li><p>Separate your <em>enveloc</em> install from your system Python so things don’t break</p></li>
+</ol>
+</div></blockquote>
+<p>If you do not have either a miniconda or anaconda installation you can follow
+the <a href="https://docs.conda.io/en/latest/miniconda.html" target="_blank">conda-install</a> instructions. Once anaconda (or miniconda, my preference) is installed,
+create a new conda environment with the following:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda create -n enveloc numpy scipy matplotlib obspy proj cartopy scikit-learn utm
+</pre></div>
+</div>
+<p>Next activate that environment by calling:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">source</span> activate enveloc
+</pre></div>
+</div>
+<p>This ensures your xcloc environment is active, so that  when you call pip, it will install packages
+into the xcloc environment. Now install <em>enveloc</em>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install enveloc
+</pre></div>
+</div>
+<div class="section" id="python-version">
+<h2><span class="section-number">2.1. </span>Python Version<a class="headerlink" href="#python-version" title="Permalink to this headline">¶</a></h2>
+<p>The code has been tested on Python 3.7 and 3.8. It may work on other (possibly even 2.7),
+but no promises.</p>
+</div>
+<div class="section" id="dependencies">
+<h2><span class="section-number">2.2. </span>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>numpy</p></li>
+<li><p>scipy</p></li>
+<li><p>matplotlib</p></li>
+<li><p>obspy</p></li>
+<li><p>proj</p></li>
+<li><p>cartopy</p></li>
+<li><p>scikit-learn</p></li>
+<li><p>utm</p></li>
+</ul>
+</div>
+<div class="section" id="notes">
+<h2><span class="section-number">2.3. </span>Notes<a class="headerlink" href="#notes" title="Permalink to this headline">¶</a></h2>
+<p>Most packages are available through PyPI, but I have been unsuccessful in install proj (on which cartopy relies)
+directly through pip, hence the use of anaconda (that and it makes life easier anyway).</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="setup.html" class="btn btn-neutral float-right" title="3. Usage overview" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="intro.html" class="btn btn-neutral float-left" title="1. Introduction" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Aaron Wech
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

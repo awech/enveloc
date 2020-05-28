@@ -1,0 +1,273 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>6. detection object &mdash; XC_loc 1.0.6 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="5. XCOR object" href="xcor.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> XC_loc
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">1. Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">2. enveloc Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="setup.html">3. Usage overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">4. Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="xcor.html">5. <em>XCOR</em> object</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">6. <em>detection</em> object</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">XC_loc</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li><span class="section-number">6. </span><em>detection</em> object</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/location.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-XC_loc.XC_main">
+<span id="detection-object"></span><span id="detection-class"></span><h1><span class="section-number">6. </span><em>detection</em> object<a class="headerlink" href="#module-XC_loc.XC_main" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt id="XC_loc.XC_main.detections">
+<em class="property">class </em><code class="sig-prename descclassname">XC_loc.XC_main.</code><code class="sig-name descname">detections</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">detects</span><span class="o">=</span><span class="default_value">[]</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/XC_loc/XC_main.html#detections"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#XC_loc.XC_main.detections" title="Permalink to this definition">¶</a></dt>
+<dd><p>‘detections’ object. Contains different ‘event_list’ objects as properties. This
+object allows for lists all events, clustered events, and unclustered events to
+exist all in one place and be modified using the same class methods.</p>
+<dl class="py method">
+<dt id="XC_loc.XC_main.detections.filter">
+<code class="sig-name descname">filter</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">min_t</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">max_t</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">min_lat</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">max_lat</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">min_lon</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">max_lon</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">min_horizontal_scatter</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">max_horizontal_scatter</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">min_depth</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">max_depth</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">min_rd</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">max_rd</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">min_vertical_scatter</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">max_vertical_scatter</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">min_num_channels</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">max_num_channels</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/XC_loc/XC_main.html#detections.filter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#XC_loc.XC_main.detections.filter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filter each event_list in the detections object by location properties and return a new detections object
+with modified event_lists</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="XC_loc.XC_main.detections.cluster">
+<code class="sig-name descname">cluster</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dx</span><span class="o">=</span><span class="default_value">25</span></em>, <em class="sig-param"><span class="n">dt</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">num_events</span><span class="o">=</span><span class="default_value">4</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/XC_loc/XC_main.html#detections.cluster"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#XC_loc.XC_main.detections.cluster" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cluster locations in the ‘detections’ event_list using ‘DBSCAN’.
+dx          - the maximum horizontal distance in km
+dt                  - the maximum time difference between detections
+num_events  - number of events required to meet the distance criteria</p>
+<p>The method leaves the ‘detections’ event_list untouched, but adds additional
+event_list properties in place:
+core_clustered - events who all meet the criteria
+edge_clustered - events within ‘eps’ distance of ‘core_clustered’ event, but</p>
+<blockquote>
+<div><p>don’t themselves have num_events within ‘eps’ distance
+of them</p>
+</div></blockquote>
+<p>noise          - events that don’t meet either criteria above
+all_clustered  - core_clustered + edge_clustered combined for convenience</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="XC_loc.XC_main.detections.uncluster">
+<code class="sig-name descname">uncluster</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/XC_loc/XC_main.html#detections.uncluster"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#XC_loc.XC_main.detections.uncluster" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to remove all event lists not named ‘detections’. Operates in place.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="XC_loc.XC_main.detections.remove">
+<code class="sig-name descname">remove</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">max_scatter</span><span class="o">=</span><span class="default_value">3.0</span></em>, <em class="sig-param"><span class="n">rm_nan_loc</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">rm_nan_err</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">inplace</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/XC_loc/XC_main.html#detections.remove"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#XC_loc.XC_main.detections.remove" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to remove locations from the ‘detections’ event list. Returns a new copy.</p>
+<p>max_scatter - maximum horizontal scatter allowed for a give location
+rm_nan_loc  - if ‘True’, will remove all locations with NaN locations
+rm_nan_err  - if ‘True’, will remove all locations with NaN horizontal_scatter</p>
+<blockquote>
+<div><blockquote>
+<div><dl class="simple">
+<dt>(not appropriate if not bootstrapping to obtain horizontal_scatter,</dt><dd><p>eg. bootstrap=1)</p>
+</dd>
+</dl>
+</div></blockquote>
+<p>inplace     - boolean flag to operate in place (True) or return a copy (False,default)</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py method">
+<dt id="XC_loc.XC_main.detections.remove_duplicates">
+<code class="sig-name descname">remove_duplicates</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">distance</span><span class="o">=</span><span class="default_value">25.0</span></em>, <em class="sig-param"><span class="n">inplace</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/XC_loc/XC_main.html#detections.remove_duplicates"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#XC_loc.XC_main.detections.remove_duplicates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to remove locations within a list that have identical starttimes
+distance - maximum horizontal distance (km) below which the locations of events</p>
+<blockquote>
+<div><p>with identical starttimes are averaged</p>
+</div></blockquote>
+<p>inplace  - boolean flag to operate in place (True) or return a copy (False,default)</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="xcor.html" class="btn btn-neutral float-left" title="5. XCOR object" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Aaron Wech
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

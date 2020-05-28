@@ -1,0 +1,400 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>6. XCOR object &mdash; XC_loc 1.0.6 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="7. event_list object" href="event_list.html" />
+    <link rel="prev" title="5. Output" href="output.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> XC_loc
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">1. Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">2. enveloc Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="setup.html">3. Usage overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">4. Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="output.html">5. Output</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">6. <em>XCOR</em> object</a></li>
+<li class="toctree-l1"><a class="reference internal" href="event_list.html">7. <em>event_list</em> object</a></li>
+<li class="toctree-l1"><a class="reference internal" href="detections.html">8. <em>detections</em> object</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">XC_loc</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li><span class="section-number">6. </span><em>XCOR</em> object</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/xcor.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-XC_loc.core">
+<span id="xcor-object"></span><span id="xcor-class"></span><h1><span class="section-number">6. </span><em>XCOR</em> object<a class="headerlink" href="#module-XC_loc.core" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt id="XC_loc.core.XCOR">
+<em class="property">class </em><code class="sig-prename descclassname">XC_loc.core.</code><code class="sig-name descname">XCOR</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">st</span></em>, <em class="sig-param"><span class="n">model</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">grid_size</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">detrend</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">regrid</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">phase_types</span><span class="o">=</span><span class="default_value">['s', 'S']</span></em>, <em class="sig-param"><span class="n">normType</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">plot</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">interact</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">output</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">Cmin</span><span class="o">=</span><span class="default_value">0.5</span></em>, <em class="sig-param"><span class="n">Cmax</span><span class="o">=</span><span class="default_value">0.995</span></em>, <em class="sig-param"><span class="n">sta_min</span><span class="o">=</span><span class="default_value">3</span></em>, <em class="sig-param"><span class="n">dx_min</span><span class="o">=</span><span class="default_value">0.1</span></em>, <em class="sig-param"><span class="n">dt</span><span class="o">=</span><span class="default_value">3.0</span></em>, <em class="sig-param"><span class="n">bootstrap</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">bootstrap_prct</span><span class="o">=</span><span class="default_value">0.04</span></em>, <em class="sig-param"><span class="n">lookup_type</span><span class="o">=</span><span class="default_value">'cubic'</span></em>, <em class="sig-param"><span class="n">rotation</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">dTmax_s</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">rd_freq</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">raw_traces</span><span class="o">=</span><span class="default_value">[]</span></em>, <em class="sig-param"><span class="n">env_hp</span><span class="o">=</span><span class="default_value">[]</span></em>, <em class="sig-param"><span class="n">edge_control</span><span class="o">=</span><span class="default_value">0.03</span></em>, <em class="sig-param"><span class="n">num_processors</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">tt_file</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">waveform_loc</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">model_dir</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">gap_value</span><span class="o">=</span><span class="default_value">- 123454321</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/XC_loc/core.html#XCOR"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#XC_loc.core.XCOR" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>XCOR is the main class object that needs to be set up in order to get a location.
+Most of the paramaters will self-assign, and in many cases that is fine. The only
+essential variable is the obspy stream ‘st’, but you will likely want to give thought
+and care to the grid and velocity model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>st</strong> (<em>stream</em><em>, </em><em>required</em>) – Obspy stream of envelopes. Each trace must have stats.coordinates.latitude/longitude</p></li>
+<li><p><strong>model</strong> (<em>str</em><em>, </em><em>optional</em>) – Obspy taup model or model file from which to calculate travel times.
+If this is not provided, a default file will be called.</p></li>
+<li><p><strong>model_dir</strong> (<em>str</em><em>, </em><em>optional</em>) – Directory where model.npz file is place by obspy’s taup program
+If not provided, it will default to within the XC_loc module directory</p></li>
+<li><p><strong>grid_size</strong> (<em>dict</em><em>, </em><em>optional</em>) – A dict with keys ‘lats’, ‘lons’, and ‘deps’ each of which are 1D monotonic numpy arrays.
+If unprovided, this will be created internally based on the extent of the input stations.</p></li>
+<li><p><strong>detrend</strong> (<em>boolean</em><em>, </em><em>optional</em>) – True/False to force a demean on obspy stream <cite>st</cite> or not.
+Default = <cite>True</cite></p></li>
+<li><p><strong>regrid</strong> (<em>boolean</em><em>, </em><em>optional</em>) – Whether to reinterpolate location on finer grid.
+Default = <cite>True</cite></p></li>
+<li><p><strong>phase_types</strong> (<em>list</em><em>, </em><em>optional</em>) – list of phases for which to calculate travel times. Ultimate travel time
+used for each grid node for each station will be the minimum calculated
+from the phases in the list provided. Also accepts [‘Nkmps’] where N is a
+constant velocity in km/s. This would be useful for inputing a surface wave
+velocity, for example. See obspy taup documentation for more details on phase
+nomenclature.
+Default = [ ‘s’, ‘S’ ]</p></li>
+<li><p><strong>normType</strong> (<em>int</em><em>, </em><em>optional</em>) – Integer 1 or 2 to use an L1 or L2 norm.
+Default = 1</p></li>
+<li><p><strong>plot</strong> (<em>boolean</em><em>, </em><em>optional</em>) – Boolean flag to plot or not.
+Default = <cite>True</cite></p></li>
+<li><p><strong>interact</strong> (<em>boolean</em><em>, </em><em>optional</em>) – Boolean flag to interact with plot or not.
+Default = <cite>True</cite></p></li>
+<li><p><strong>output</strong> (<em>int</em><em>, </em><em>optional</em>) – Interger from 0-3 controlling increasing level of messages the code produces
+Default = 1</p></li>
+<li><p><strong>Cmin</strong> (<em>float</em><em>, </em><em>optional</em>) – Minimum normalized cross-correlation coefficient to be considered.
+Default = 0.5</p></li>
+<li><p><strong>Cmax</strong> (<em>float</em><em>, </em><em>optional</em>) – Maximum normalized cross-correlation coefficient to be considered. Not always
+necessary, but could be for removing correlated noise spikes, for example.
+Default = 0.995</p></li>
+<li><p><strong>sta_min</strong> (<em>int</em><em>, </em><em>optional</em>) – Minimum number of stations needed to obtain a location.
+Default = 3</p></li>
+<li><p><strong>dx_min</strong> (<em>float</em><em>, </em><em>optional</em>) – Minimum horizontal distance (km) between channels required to consider th
+cross-correlation. Useful to exclude correlations between multiple channels
+at the same station.
+Default = 0.1</p></li>
+<li><p><strong>bootstrap</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of iterations for each location. For each iteration, ‘bootstrap_prct’
+of the CC values will be zeroed out, and the resulting station contributions
+are adjusted accordingly to obtain a new location. These iterated locations
+provide a measure of location scatter, which is recorded in the location object.
+The final location will use all of the data (no CC values zeroed out). Thus,
+if boootstrap=N, it will bootstrap N times and get a location using all the data
+on the N+1 iteration. If bootstrap==1, the data are only located once with all the
+data, and no horizontal scatter is estimated.
+Default = 1</p></li>
+<li><p><strong>bootstrap_prct</strong> (<em>float</em><em>, </em><em>optional</em>) – Value between 0 and 1 determining the fraction of cc data to throw out in each
+bootstrap iteration.
+Default = 0.04 (4%)</p></li>
+<li><p><strong>lookup_type</strong> (<em>str</em><em>, </em><em>optional</em>) – Type of interpolation method to use when getting a predicted cross-correlation
+value for each channel pair for each grid (‘linear’, ‘nearest’, ‘zero’, ‘slinear’,
+‘quadratic’, ‘cubic’). See scipy.interpolate.interp1d for details.
+Default=’cubic’</p></li>
+<li><p><strong>rotation</strong> (<em>dict</em><em>, </em><em>optinal</em>) – Dictionary defining desired rotated grid. Needs keys ‘x’ (x grid nodes),
+‘y’ (y grid nodes), ‘z’ (depth grid nodes), ‘lat0’ &amp; ‘lon0’ (origin lat/lon),
+‘az’, rotation azimuth (counterclockwise from East)
+Default = <cite>None</cite></p></li>
+<li><p><strong>dTmax_s</strong> (<em>float</em><em>, </em><em>optional</em>) – <dl class="simple">
+<dt>Maximum cross-correlation shift in seconds. Defaults to the smaller of:</dt><dd><ol class="loweralpha simple">
+<li><p>1/2 of the obspy stream window length</p></li>
+<li><p>the maximum predicted inter-station differential time + <cite>dt</cite></p></li>
+</ol>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>dt</strong> (<em>float</em><em>, </em><em>optional</em>) – Seconds of additional allowed cross-correlation shifts beyond the maximumpredicted
+interchannel differential time.
+Default = 3.0</p></li>
+<li><p><strong>rd_freq</strong> (<em>float</em><em>, </em><em>optional</em>) – Frequency at which to calculate surface wave reduced displacement using the
+velocity from the top layer of the velocity model. If not set, body wave reduced
+displacement will be calculated.
+Default = <cite>None</cite></p></li>
+<li><p><strong>raw_traces</strong> (<em>stream</em><em>, </em><em>optional</em>) – Obpsy stream of non-envelope traces matching the input <cite>st</cite> variable. Used to
+calculate reduced displacement.
+Default = <cite>[]</cite></p></li>
+<li><p><strong>env_hp</strong> (<em>stream</em><em>, </em><em>optional</em>) – Obspy stream of second envelopes with traces matchin the input <cite>st</cite> variable.
+This would typically be envelopes generated in a different passband than <cite>st</cite>.
+If a location is obtained for st, it will also check env_hp and set a flag.
+This can be useful for weeding out earthquake detections or correlated noise
+spikes when you are only interested in detecting a band-limited signal. It
+essentially gives you a way to flag windows where you have coherent energy in
+two different passbands. Kind of a niche-use case, but necessary for my needs.
+Default = <cite>[]</cite></p></li>
+<li><p><strong>edge_control</strong> (<em>float</em><em>, </em><em>optional</em>) – Value between 0 and 1 defining a percentage from the window edge to not allow
+the peak trace energy. That is, if any trace’s peak amplitude occurs between a
+with a percentage of the window edge, it is removed. Useful when autolocating.
+Default = 0.03</p></li>
+<li><p><strong>num_processors</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of processors to use if you are iterating through sliding windows to
+get locations. This can also be set in the <cite>locate()</cite> method.
+Default = 1.</p></li>
+<li><p><strong>tt_file</strong> (<em>str</em><em>, </em><em>optional</em>) – Path to a .npz file containing pre-calculated traveltimes for this station set
+on this grid. Calulated using <cite>save_traveltimes()</cite> method.
+Default = <cite>None</cite></p></li>
+<li><p><strong>waveform_loc</strong> (<em>boolean</em><em>, </em><em>optional</em>) – Boolean flag to optionally locate waveforms rather than envelopes.
+This flag exists to bypass some of the built in envelope quailty control
+Default = <cite>False</cite></p></li>
+<li><p><strong>gap_value</strong> (<em>int</em><em>, </em><em>optional</em>) – Value used to flag data gaps identified in preprocessing.
+Default = -123454321</p></li>
+<li><p><strong>return</strong> (<em>object</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="XC_loc.core.XCOR.calculate_traveltimes">
+<code class="sig-name descname">calculate_traveltimes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/XC_loc/core.html#XCOR.calculate_traveltimes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#XC_loc.core.XCOR.calculate_traveltimes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate travel times based on the model and grid provided in the <cite>XCOR</cite> object</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="XC_loc.core.XCOR.save_traveltimes">
+<code class="sig-name descname">save_traveltimes</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">outfile</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/XC_loc/core.html#XCOR.save_traveltimes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#XC_loc.core.XCOR.save_traveltimes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save an .npz file containing the model and grid. The variables should be created
+using the <cite>calculate_traveltimes()</cite> method, which is called internally  when initiating
+an XCOR object with a model and grid.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>file</strong> (<em>str</em><em>, </em><em>required</em>) – The .npz file you wish to save, ideally with full path provided.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="XC_loc.core.XCOR.load_traveltimes">
+<code class="sig-name descname">load_traveltimes</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/XC_loc/core.html#XCOR.load_traveltimes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#XC_loc.core.XCOR.load_traveltimes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load an .npz file containing a model and grid, and assign the appropriate times
+to each trace in the object. The .npz file can be created initially using the
+<cite>save_traveltimes()</cite> method after <cite>XCOR</cite> has run <cite>calculate_traveltimes()</cite> with a model and grid.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>file</strong> (<em>str</em><em>, </em><em>required</em>) – The path/filename to the .npz file you wish to load</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="XC_loc.core.XCOR.locate">
+<code class="sig-name descname">locate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">window_length</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">step</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">offset</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">include_partial_windows</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">nearest_sample</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">dTmax_s</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">num_processors</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/XC_loc/core.html#XCOR.locate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#XC_loc.core.XCOR.locate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main method to locate data provided. This method is actually a wrapper to call main envelope
+cross correlation location algorithm <cite>XC_locate</cite>.</p>
+<p>If using this to locate a single window of data, simply call locate() with no input parameters.
+All of the relevant details (plot, interact, map_resolution) are properties set in the initial
+object creation. If using this to iterate over windows and locate, the following parameters must be set:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>window_length</strong> (<em>float</em><em>, </em><em>optional</em>) – Length of each sub-window in seconds.
+Default = <cite>None</cite></p></li>
+<li><p><strong>step</strong> (<em>float</em><em>, </em><em>optional</em>) – The step between the start times of two successive windows in seconds. Can be negative if an offset is given.
+Default = <cite>None</cite></p></li>
+</ul>
+</dd>
+</dl>
+<p>These parameters are optional:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>offset</strong> (<em>float</em><em>, </em><em>optional</em>) – The offset of the first window in seconds relative to the start time of the whole interval.
+Default = <cite>False</cite></p></li>
+<li><p><strong>include_partial_windows</strong> (<em>boolean</em><em>, </em><em>optional</em>) – Determines if sub-windows that are shorter then 99.9 % of the desired length are returned.
+Default = <cite>False</cite></p></li>
+<li><p><strong>nearest_sample</strong> (<em>boolean</em><em>, </em><em>optional</em>) – If set to True, the closest sample is selected, if set to False, the inner (next sample for a
+start time border, previous sample for an end time border) sample containing the time is selected.
+Default = <cite>True</cite></p></li>
+<li><p><strong>dTmax_s</strong> (<em>float</em><em>, </em><em>optional</em>) – <dl class="simple">
+<dt>Maximum cross-correlation shift in seconds. Defaults to the smaller of:</dt><dd><ol class="loweralpha simple">
+<li><p>1/2 of the obspy stream sub-window length</p></li>
+<li><p>the maximum predicted inter-station differential time + ‘dt’, set during initial object creation</p></li>
+</ol>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>num_processors</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of processors to use in parallel
+Default = <cite>None</cite></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="event_list.html" class="btn btn-neutral float-right" title="7. event_list object" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="output.html" class="btn btn-neutral float-left" title="5. Output" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Aaron Wech
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
