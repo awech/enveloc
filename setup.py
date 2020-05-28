@@ -1,22 +1,22 @@
 from setuptools import setup, find_packages
 
 long_description = '''
-XC_loc: open-source python package built on obspy to locate seismic signals
+enveloc: open-source python package built on obspy to locate seismic signals
 using envelope cross correlation and a grid search
 '''
 
 setup(
-  name = 'XC_loc',
+  name = 'enveloc',
   packages = find_packages(),
   include_package_data=True,
-  version = '1.0.6',
+  version = '1.1.0',
   license='LGPL',
-  description = 'XC_loc - envelope cross-correlation location method',   # Give a short description about your library
+  description = 'enveloc - envelope cross-correlation location method',
   long_description = long_description,
   author = 'Aaron Wech',
   author_email = 'awech@usgs.gov',
-  url = 'https://github.com/awech/XC_loc',
-  download_url = 'https://github.com/awech/XC_loc/archive/v1.0.6.tar.gz',    # I explain this later on
+  url = 'https://github.com/awech/enveloc',
+  download_url = 'https://github.com/awech/enveloc/archive/v1.1.0.tar.gz',
   keywords = ['envelope cross correlation', 'seimsology', 'tremor'],
   install_requires=[
           'numpy',
@@ -25,7 +25,7 @@ setup(
           'proj',
           'obspy',
           'cartopy',
-          'sklearn',
+          'scikit-learn',
           'utm',
       ],
   setup_requires=[
