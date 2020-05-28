@@ -195,6 +195,8 @@ A grid can be provided as an input argument, *grid_size*, a dictionary with keys
 
 .. code-block:: python
 
+	import numpy as np
+
 	grid_size = { 
 	              'deps' : np.arange(0.5,30,2),           # in km
 	              'lons' : np.arange(-158.4,-157.9, 0.04),
@@ -208,6 +210,8 @@ azimuth (degrees counterclockwise from East). For example:
 
 .. code-block:: python
 
+	import numpy as np
+	
 	rotation = {
 	             'x'    : np.arange(-20,20,1), # in km
 	             'y'    : np.arange(-10,10,1), # in km

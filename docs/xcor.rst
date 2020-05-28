@@ -3,6 +3,6 @@
 *XCOR* object
 -------------
 
-.. automodule:: XC_loc.core
+.. automodule:: enveloc.core
     :members: XCOR
     :show-inheritance: False

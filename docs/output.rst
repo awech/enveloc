@@ -146,8 +146,8 @@ Clustering Example
 
 .. code-block:: python
 
-	from XC_loc.core import XCOR
-	from XC_loc import example_utils
+	from enveloc.core import XCOR
+	from enveloc import example_utils
 	import numpy as np
 
 	t1 = '2020-05-24 00:00'

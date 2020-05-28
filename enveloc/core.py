@@ -2,8 +2,8 @@ from obspy.taup import TauPyModel
 from obspy.geodetics import locations2degrees
 import numpy as np
 import sys
-from XC_loc import xcorr_utils
-from XC_loc import xloc_utils
+from enveloc import xcorr_utils
+from enveloc import xloc_utils
 from copy import copy, deepcopy
 from itertools import combinations
 from obspy.geodetics.base import gps2dist_azimuth
@@ -296,7 +296,7 @@ def XC_locate(win,XC):
 		####################################################
 		""" Done with bootstrap loop. Plot & interact """
 		if XC.plot and XC._num_processors==1:
-			from XC_loc.plotting_utils import XC_plot
+			from enveloc.plotting_utils import XC_plot
 			""" set up some variables for plotting """
 			CC1=1-CCrm['C'][:,CCrm['indx'][0,:]!=CCrm['indx'][1,:]]
 			Nseis0=len(CCrm['st'])
@@ -704,7 +704,7 @@ class event_list(object):
 
 		"""
 
-		from XC_loc.plotting_utils import plot_locations
+		from enveloc.plotting_utils import plot_locations
 		
 		plot_locations(self,XC)
 
@@ -901,7 +901,7 @@ class detections(object):
 
 		"""
 
-		from XC_loc.plotting_utils import plot_locations
+		from enveloc.plotting_utils import plot_locations
 		
 		plot_locations(self,XC)
 
@@ -936,7 +936,7 @@ class XCOR(object):
 		If this is not provided, a default file will be called.
 	model_dir : str, optional
 		Directory where model.npz file is place by obspy's taup program
-		If not provided, it will default to within the XC_loc module directory
+		If not provided, it will default to within the enveloc module directory
 	grid_size : dict, optional
 		A dict with keys 'lats', 'lons', and 'deps' each of which are 1D monotonic numpy arrays. 
 		If unprovided, this will be created internally based on the extent of the input stations.
@@ -1535,5 +1535,5 @@ class XCOR(object):
 
 
 	def plot_grid(self):
-		from  XC_loc import plotting_utils
+		from  enveloc import plotting_utils
 		plotting_utils.grid_plot(self)

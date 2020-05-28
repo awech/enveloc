@@ -13,14 +13,11 @@
 import os
 import sys
 import sphinx_rtd_theme
-# sys.path.append(os.path.abspath('../XC_loc'))
-# sys.path.append(os.path.abspath('/Users/awech-local/repositories/XC_loc'))
-# sys.path.append(os.path.abspath('/Users/awech-local/repositories/XC_loc/XC_loc'))
 sys.path.append(os.path.abspath('..'))
 
 # -- Project information -----------------------------------------------------
 
-project = 'XC_loc'
+project = 'enveloc'
 copyright = '2020, Aaron Wech'
 author = 'Aaron Wech'
 

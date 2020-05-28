@@ -3,7 +3,7 @@ from obspy.signal.filter import envelope
 from obspy.core.util import AttribDict
 from obspy.clients.fdsn import Client
 import numpy as np
-from XC_loc.core import XCOR
+from enveloc.core import XCOR
 
 client = Client('IRIS')
 

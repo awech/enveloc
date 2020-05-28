@@ -20,7 +20,7 @@ Then filter and convert to smoothed envelopes:
 
 .. code-block:: 
 
-	from XC_loc import example_utils
+	from enveloc import example_utils
 
 	t1 = '2018-04-28 13:07'
 	t2 = '2018-04-28 13:09'
@@ -75,7 +75,7 @@ Alternatively, you could do all of the above steps in one test:
 
 .. code-block:: python
 
-	from XC_loc import example_utils
+	from enveloc import example_utils
 	loc, XC = example_utils.interactive_example()
 
 By default the code will attempt a single location and produce an interactive plot:
@@ -159,7 +159,7 @@ Here is an example locating tectonic tremor in Pacific Northwest of the USA.
 
 .. code-block:: python
 
-	from XC_loc import example_utils
+	from enveloc import example_utils
 	loc, XC = example_utils.cascadia_example() 
 
 In this example XC loc is created in `cascadia_example()` by the command:
@@ -192,7 +192,7 @@ All of the above steps are the same: you pre-process the data beforehand, and ha
 
 .. code-block:: python
 
-	from XC_loc import example_utils
+	from enveloc import example_utils
 
 	t1 = '2020-05-24 00:00'
 	t2 = '2020-05-24 08:00'
@@ -228,7 +228,7 @@ Now we can locate windows of length 300 seconds overlapping by 150 seconds:
 .. code-block:: python
 
 	import numpy as np
-	from XC_loc.core import XCOR
+	from enveloc.core import XCOR
 
 	mygrid = {'lons': np.arange(-125,-121+0.05,0.075),
 	          'lats': np.arange(46.5,49.0+0.05,0.075),

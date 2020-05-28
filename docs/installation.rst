@@ -22,8 +22,8 @@ Next activate that environment by calling:
 
     source activate enveloc
 
-This ensures your xcloc environment is active, so that  when you call pip, it will install packages
-into the xcloc environment. Now install *enveloc*:
+This ensures your enveloc environment is active, so that  when you call pip, it will install packages
+into the enveloc environment. Now install *enveloc*:
 
 .. code-block:: bash
 
