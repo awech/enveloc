@@ -178,7 +178,6 @@ which:
 #. Increases output. The *output* variable increases how much output is print to the screen when 
    *enveloc* runs. Higher integers (up to 4) means much chattier.
 
-.. 
 
 Auto-locations
 --------------
