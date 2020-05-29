@@ -3,6 +3,7 @@
 *event_list* object
 -------------------
 
-.. autoclass:: enveloc.core.event_list
+.. automodule:: enveloc.core
+    :members: event_list
     :show-inheritance: False
     :noindex:

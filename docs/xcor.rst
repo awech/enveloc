@@ -3,5 +3,6 @@
 *XCOR* object
 -------------
 
-.. autoclass:: enveloc.core.XCOR
+.. automodule:: enveloc.core
+    :members: XCOR
     :show-inheritance: False
