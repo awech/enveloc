@@ -9,3 +9,5 @@ __pycache__/
 /enveloc/default_vel_model.npz
 enveloc.egg-info/
 dist/
+docs/_build
+docs/_static
