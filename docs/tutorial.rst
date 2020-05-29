@@ -132,7 +132,7 @@ Again, using the same data as above, we can try locating on a custom rotated gri
 	             'lon0' : -155.281,
 	             'az'   : 30 }	
 
-	XC = XCOR(env,rotation=rotation,interact=False)
+	XC = XCOR(env,rotation=my_rotation,interact=False)
 	loc = XC.locate()
 
 Where the *rotation* argument is set to the dictionary variable *my_rotation*.
