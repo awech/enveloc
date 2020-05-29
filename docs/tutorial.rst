@@ -232,7 +232,7 @@ Now we can locate windows of length 300 seconds overlapping by 150 seconds:
 
 	mygrid = {'lons': np.arange(-125,-121+0.05,0.075),
 	          'lats': np.arange(46.5,49.0+0.05,0.075),
-	          'deps': np.arange(20,60+0.1,4)}
+	          'deps': np.arange(20,60+0.1,8)}
 
 
 	XC  = XCOR(env,bootstrap=20,plot=False,grid_size=mygrid,output=2)
