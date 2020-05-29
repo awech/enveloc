@@ -7,3 +7,5 @@ __pycache__/
 
 .env
 /enveloc/default_vel_model.npz
+enveloc.egg-info/
+dist/
