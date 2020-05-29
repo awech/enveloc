@@ -53,6 +53,8 @@ todo_include_todos = True
 
 autodoc_member_order = 'bysource'
 
+master_doc = 'index'
+
 
 # -- Options for HTML output -------------------------------------------------
 
