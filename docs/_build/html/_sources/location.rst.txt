@@ -1,7 +1,0 @@
-.. _detection class:
-
-*detection* object
-------------------
-
-.. automodule:: XC_loc.XC_main
-    :members: detections

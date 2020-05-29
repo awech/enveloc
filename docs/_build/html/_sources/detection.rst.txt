@@ -1,9 +1,0 @@
-.. _detection:
-
-*detection* object
--------------------
-
-.. automodule:: XC_loc.core
-    :members: detection
-    :show-inheritance: False
-    :noindex:
