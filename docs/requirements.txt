@@ -1,0 +1,8 @@
+numpy
+scipy
+matplotlib
+proj
+obspy
+cartopy
+scikit-learn
+utm
