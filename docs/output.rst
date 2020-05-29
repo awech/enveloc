@@ -66,7 +66,7 @@ The :class:`core.event_list` object has several methods to manipulate this list 
 	new_locs = locs.remove(max_scatter=5,rm_nan_loc=True,rm_nan_err=True,inplace=False)
 
 	print(new_locs)
-	event_list object containing 145 events
+	event_list object containing 140 events
 
 Filter out location objects based on various properties, :meth:`event_list.filter`
 
@@ -75,7 +75,7 @@ Filter out location objects based on various properties, :meth:`event_list.filte
 	new_locs2 = new_locs.filter(min_lat=48)
 
 	print(new_locs2)
-	event_list object containing 86 events
+	event_list object containing 84 events
 
 
 Or get arrays of location attributes
@@ -100,11 +100,11 @@ For some seismic sources, like tectonic tremor or earthquake swarms, it can be u
 	print(detections)
 	
 	DETECTION object with attributes:
-	(detections: 145 events
-	all_clustered: 68 events
-	core_clustered: 61 events
+	(detections: 140 events
+	all_clustered: 67 events
+	core_clustered: 60 events
 	edge_clustered: 7 events
-	noise: 77 events)
+	noise: 73 events)
 
 The clustering uses :meth:`sklearn.cluster.DBSCAN` (|documentation| and |demo|) and outputs a :ref:`detection` which contains different :class:`event_list` objects 
 as attributes:
@@ -131,7 +131,7 @@ This object allows for lists of all events, clustered events, and unclustered ev
 	core_list = detections.core_clustered
 
 	print(core_list)
-	event_list object containing 61 events
+	event_list object containing 60 events
 
 or get the lat/lon data
 
