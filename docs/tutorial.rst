@@ -243,14 +243,14 @@ Now we can locate windows of length 300 seconds overlapping by 150 seconds:
 Parallel Processing
 ___________________
 
-Processing all these windows takes some time. That took about ~260 seconds on my 2018 MacBook Pro (the location step, not the *XC=XCOR(...)* step that calculates traveltimes...more on that later). We can speed that up by using multiple processors. You can do that by changing the number of processors used:
+Processing all these windows takes some time. That took about ~315 seconds on my 2018 MacBook Pro (the location step, not the *XC=XCOR(...)* step that calculates traveltimes...more on that later). We can speed that up by using multiple processors. You can do that by changing the number of processors used:
 
 .. code-block:: python
 
 	XC  = XCOR(env,bootstrap=20,plot=False,grid_size=mygrid,output=2,num_processors=4)
 	locs = XC.locate(window_length=300,step=150)
 
-Only looping over location windows is parallelized. Increasing to 4 processors reduces the location step of 191 windows to ~50 seconds on my machine.
+Only looping over location windows is parallelized. Increasing to 4 processors reduces the location step of 191 windows to ~55 seconds on my machine.
 
 See the :ref:`output section<multiple locations>` for more discussion on the output *locs*.
 
