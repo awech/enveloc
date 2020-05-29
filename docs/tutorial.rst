@@ -172,13 +172,13 @@ which:
 
 #. Uses a custom lat/lon grid
 #. Regrids. After finding the minimum misfit grid-node, it relocates on a finer scale grid 
-   surrounding the original grid node
+   surrounding the original grid node. (not well-tested on rotated grid)
 #. Bootstraps. It attempts 30 locations, throwing away a small percentage (Default=4%) of the
    correlations each time to create a cloud of scattered locations, which can be used to estimate location robustness.
 #. Increases output. The *output* variable increases how much output is print to the screen when 
    *enveloc* runs. Higher integers (up to 4) means much chattier.
 
-
+.. 
 
 Auto-locations
 --------------
