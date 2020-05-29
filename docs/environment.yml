@@ -1,4 +1,4 @@
-name: xcloc
+name: enveloc
 channels:
   - conda-forge
   - defaults
@@ -74,7 +74,7 @@ dependencies:
   - owslib=0.19.2=py_1
   - pcre=8.44=h4a8c4bd_0
   - pillow=7.1.2=py38h83dc5e5_0
-  - pip=20.1.1=pyh9f0ad1d_0
+  - pip=20.1.1=py_1
   - pixman=0.38.0=h01d97ff_1003
   - poppler=0.88.0=h3232a60_0
   - poppler-data=0.4.9=1
@@ -95,7 +95,7 @@ dependencies:
   - requests=2.23.0=pyh8c360ce_2
   - scikit-learn=0.23.1=py38hb7f0800_0
   - scipy=1.4.1=py38h38b60c6_3
-  - setuptools=46.4.0=py38h32f6830_0
+  - setuptools=47.1.0=py38h32f6830_0
   - shapely=1.7.0=py38h5b1fbde_3
   - six=1.15.0=pyh9f0ad1d_0
   - sqlalchemy=1.3.17=py38h64e0658_0
@@ -115,47 +115,9 @@ dependencies:
   - zlib=1.2.11=h0b31af3_1006
   - zstd=1.4.4=h4b3e974_3
   - pip:
-    - alabaster==0.7.12
-    - appnope==0.1.0
     - arrow==0.15.6
-    - babel==2.8.0
-    - backcall==0.1.0
-    - bleach==3.1.5
     - click==7.1.2
-    - docutils==0.16
     - enveloc==1.1.0
-    - imagesize==1.2.0
-    - ipython==7.14.0
-    - ipython-genutils==0.2.0
-    - jedi==0.17.0
-    - jinja2==2.11.2
-    - keyring==21.2.1
-    - markupsafe==1.1.1
-    - packaging==20.4
-    - parso==0.7.0
-    - pexpect==4.8.0
-    - pickleshare==0.7.5
-    - pkginfo==1.5.0.1
     - proj==0.2.0
-    - prompt-toolkit==3.0.5
-    - ptyprocess==0.6.0
-    - pygments==2.6.1
-    - readme-renderer==26.0
-    - requests-toolbelt==0.9.1
-    - sklearn==0.0
-    - snowballstemmer==2.0.0
-    - sphinx==3.0.4
-    - sphinxcontrib-applehelp==1.0.2
-    - sphinxcontrib-devhelp==1.0.2
-    - sphinxcontrib-htmlhelp==1.0.3
-    - sphinxcontrib-jsmath==1.0.1
-    - sphinxcontrib-qthelp==1.0.3
-    - sphinxcontrib-serializinghtml==1.1.4
-    - tqdm==4.46.0
-    - traitlets==4.3.3
-    - twine==3.1.1
-    - wcwidth==0.1.9
-    - webencodings==0.5.1
-    - xc-loc==1.0.6
-prefix: /Users/awech-local/miniconda3/envs/xcloc
+prefix: /Users/awech-local/miniconda3/envs/enveloc
 
