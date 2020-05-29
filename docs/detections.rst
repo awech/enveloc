@@ -3,7 +3,6 @@
 *detections* object
 -------------------
 
-.. automodule:: enveloc.core
-    :members: detections
+.. autoclass:: enveloc.core.detections
     :show-inheritance: False
     :noindex:
