@@ -10,6 +10,11 @@ from obspy.geodetics.base import gps2dist_azimuth
 from datetime import timedelta
 
 
+def test():
+	from  enveloc import plotting_utils
+	plotting_utils.interactive_example()
+
+
 def progress(count, total, status=''):
 	"""
 	Method to display status bar when calculating traveltimes
