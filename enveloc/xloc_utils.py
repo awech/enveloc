@@ -206,8 +206,8 @@ def regridHypocenter_rotated(XC,misfit):
     d_X=np.diff(XC.grid_size['x']).mean()
 
     x_loc, y_loc, zone_num, zone_let = utm.from_latlon(lat,lon)
-    new_ys = np.linspace(y_loc-2*d_Y,y_loc+2*d_Y,n_newgrid)
-    new_xs = np.linspace(x_loc-2*d_X,x_loc+2*d_X,n_newgrid)
+    new_ys = np.linspace((y_loc-y0)/1000-2*d_Y,(y_loc-y0)/1000+2*d_Y,n_newgrid)
+    new_xs = np.linspace((x_loc-x0)/1000-2*d_X,(x_loc-x0)/1000+2*d_X,n_newgrid)
 
     new_ys = new_ys[np.where(new_ys>XC.grid_size['y'][ 0])[0]]
     new_ys = new_ys[np.where(new_ys<XC.grid_size['y'][-1])[0]]
