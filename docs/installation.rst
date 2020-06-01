@@ -5,8 +5,8 @@ enveloc Installation
 
 I strongly recommend installing *enveloc* using conda because this will:
 
-	#. Simplify the install
-	#. Separate your *enveloc* install from your system Python so things don't break
+    #. Simplify the install
+    #. Separate your *enveloc* install from your system Python so things don't break
 
 If you do not have either a miniconda or anaconda installation you can follow
 the |conda-install| instructions. Once anaconda (or miniconda, my preference) is installed,
@@ -14,7 +14,7 @@ create a new conda environment with the following:
 
 .. code-block:: bash
 
-    conda create -n enveloc numpy scipy matplotlib obspy proj cartopy scikit-learn utm
+    conda create -n enveloc python=3 numpy obspy=1.2.1 cartopy scikit-learn utm
 
 Next activate that environment by calling:
 
