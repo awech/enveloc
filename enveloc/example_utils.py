@@ -133,6 +133,41 @@ def interactive_example():
 	return loc, XC
 
 
+def test():
+
+	t1 = '2018-04-28 13:07'
+	t2 = '2018-04-28 13:09'
+
+	FREQMIN = 1.0
+	FREQMAX = 8.0
+	LOWPASS = 0.2
+
+	sta_list=[
+				'HV.BYL..HHZ',
+				'HV.DEVL..HHZ',
+				'HV.HAT..HHZ',
+				'HV.KKO..HHZ',
+				'HV.NPT..HHZ',
+				'HV.OBL..HHZ',
+				'HV.PAUD..HHZ',
+				'HV.PUHI..HHZ',
+				'HV.RIMD..HHZ',
+				'HV.SBL..HHZ',
+				'HV.SDH..HHZ',
+				'HV.UWB..HHZ',
+				'HV.UWE..HHZ',
+				'HV.WRM..HHZ',
+			]
+
+	print('Downloading some data for test...')
+	env = get_IRIS_data(sta_list,t1,t2,f1=FREQMIN,f2=FREQMAX,lowpass=LOWPASS,client=client)
+
+	print('Creating XCOR object....\n')
+	XC = XCOR(env,plot=True,interact=False)
+	print('Locating from envelopes:\n')
+	loc = XC.locate()
+
+
 def custom_grid_example():
 
 	t1 = '2018-04-28 13:07'

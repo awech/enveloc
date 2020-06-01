@@ -27,6 +27,10 @@ Then install with pip:<br>
 
 `pip install enveloc`<br>
 
+Test install with:<br>
+`from enveloc.example_utils import test`<br>
+`test()`<br>
+
 ### Documentation
 
 Go [here](https://enveloc.readthedocs.io/) for more information<br>

@@ -29,6 +29,14 @@ into the enveloc environment. Now install *enveloc*:
 
     pip install enveloc
 
+To test the install:
+
+.. code-block:: python
+
+    from enveloc.example_utils import test
+
+    test()
+
 .. |github| raw:: html
 
     <a href="https://github.com/awech/enveloc" target="_blank">github</a>
