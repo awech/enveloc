@@ -1,9 +1,8 @@
+from obspy.geodetics.base import gps2dist_azimuth
+from scipy.interpolate import interp1d, griddata
 import numpy as np
 
 np.set_printoptions(precision=3)
-from obspy.geodetics.base import gps2dist_azimuth
-from scipy.interpolate import interp1d, griddata
-
 
 def channel_list(st):
     channels = []
@@ -19,7 +18,7 @@ def reduced_displacement(loc, XC, st_temp):
 
     dr = []
 
-    channels = [l[0] for l in loc.channels]
+    channels = [ll[0] for ll in loc.channels]
     for tr in st_temp:
         if tr.id in channels:
             data = tr.data * 100
@@ -160,7 +159,7 @@ def regridHypocenter(XC, misfit):
     d_LON = np.diff(XC.grid_size['lons']).mean()
 
     new_lats = np.linspace(lat - 2 * d_LAT, lat + 2 * d_LAT, n_newgrid)
-    new_lons = np.linspace(lon - 2 * d_LAT, lon + 2 * d_LAT, n_newgrid)
+    new_lons = np.linspace(lon - 2 * d_LON, lon + 2 * d_LON, n_newgrid)
 
     new_lats = new_lats[np.where(new_lats > XC.grid_size['lats'][0])[0]]
     new_lats = new_lats[np.where(new_lats < XC.grid_size['lats'][-1])[0]]
