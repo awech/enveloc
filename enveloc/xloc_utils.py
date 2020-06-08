@@ -1,6 +1,6 @@
+import numpy as np
 from obspy.geodetics.base import gps2dist_azimuth
 from scipy.interpolate import interp1d, griddata
-import numpy as np
 
 np.set_printoptions(precision=3)
 
@@ -172,7 +172,9 @@ def regridHypocenter(XC, misfit):
     LONS, LATS = np.meshgrid(new_lons, new_lats)
 
     points = np.array(
-        [XC._grid['LON'][:, :, ii[2]].flatten(order='F'), XC._grid['LAT'][:, :, ii[2]].flatten(order='F')]).T
+        [XC._grid['LON'][:, :, ii[2]].flatten(order='F'),
+         XC._grid['LAT'][:, :, ii[2]].flatten(order='F')]
+    ).T
     misfit_slice = misfit_slice.flatten(order='F')
     grid_new = griddata(points, misfit_slice, (LONS, LATS), method='cubic')
     ii = np.unravel_index(grid_new.argmin(), np.shape(LONS), order='C')
@@ -219,7 +221,9 @@ def regridHypocenter_rotated(XC, misfit):
             LATS[i, j], LONS[i, j] = utm.to_latlon(newX, newY, zone_number=zone_num, zone_letter=zone_let)
 
     points = np.array(
-        [XC._grid['LON'][:, :, ii[2]].flatten(order='F'), XC._grid['LAT'][:, :, ii[2]].flatten(order='F')]).T
+        [XC._grid['LON'][:, :, ii[2]].flatten(order='F'),
+         XC._grid['LAT'][:, :, ii[2]].flatten(order='F')]
+    ).T
     misfit_slice = misfit_slice.flatten(order='F')
     grid_new = griddata(points, misfit_slice, (LONS, LATS), method='cubic')
     ii = np.unravel_index(grid_new.argmin(), np.shape(LONS), order='C')
