@@ -282,6 +282,8 @@ def XC_plot(CC,XC,CC1,misfit,loc):
 						msft[:,:,ii[2]],40,
                 		transform=ccrs.PlateCarree(),
                 		cmap='viridis_r')
+	msft_min=msft[:,:,ii[2]].min()
+	msft_max=msft[:,:,ii[2]].max()
 	misfit_ax1.plot(loc.longitude,loc.latitude,marker='*',color='firebrick',markeredgewidth=0.1,markeredgecolor='firebrick',markersize=6)
 	misfit_ax1.plot(stalons,stalats,marker='^',color='gray',markeredgewidth=0.1,markeredgecolor='gray',markersize=4,linewidth=0)
 	gl2 = misfit_ax1.gridlines(crs=ccrs.PlateCarree(), draw_labels=True,
@@ -304,7 +306,7 @@ def XC_plot(CC,XC,CC1,misfit,loc):
 	map_aspect = (meridians[-1]-meridians[0])/((parallels[-1]-parallels[0])*111.1)
 	if map_aspect > 1:
 		misfit_ax2.set_aspect((meridians[-1]-meridians[0])/((parallels[-1]-parallels[0])*111.1))
-	plt.contourf(XC._grid['LON'][ii[0],:,:], -XC._grid['DEP'][ii[0],:,:], msft[ii[0],:,:],40,cmap='viridis_r')
+	plt.contourf(XC._grid['LON'][ii[0],:,:], -XC._grid['DEP'][ii[0],:,:], msft[ii[0],:,:],40,cmap='viridis_r',vmin=msft_min,vmax=msft_max)
 	plt.plot(loc.longitude,-loc.depth,'*',markerfacecolor='firebrick',markeredgecolor='firebrick',markeredgewidth=0.1)
 	misfit_ax2.yaxis.tick_right()
 	plt.ylabel('Depth',fontsize=8)
