@@ -104,42 +104,41 @@ def create_rotated_grid(rotate_params):
 def CCtoHypocenter(CC, XC):
     Nseis0 = len(CC['st'])
     NW2 = len(np.where(CC['W2'] > 0)[0])  # number of seismogram pairs contributing to solution
-    CMAXVEC = CC['maxC'].flatten()[CC['ii']]
-    CMAXVEC = np.tile(CMAXVEC, len(CC['tC'])).reshape((len(CC['tC']), len(CMAXVEC)))
-    CC1 = CMAXVEC - CC['C'].T[np.where(CC['indx'][0][:] != CC['indx'][1][:])[0]].T
-    # CCshift = np.arange(Nseis0*(Nseis0-1)/2)*(2*(XC._mlag+1)-1)-1 # Oct-30-2017 change
-    CCshift = np.arange(Nseis0 * (Nseis0 - 1) / 2) * (2 * (XC._mlag + 1) - 1)  # Oct-30-2017 change
 
     ## Calculate misfit for every location on the grid ##
     #####################################################
     dT = np.zeros((len(XC._grid['LON'].flatten()), Nseis0))  # delay times to each seismogram
     for ksta in np.arange(Nseis0):
         dT.T[ksta] = CC['st'][ksta].TT.flatten(order='F') * CC['st'][ksta].stats.sampling_rate
-    # Oct-30-2017 change:
-    # deltaT = dT.T[CC['j1']].T - dT.T[CC['i1']].T + XC._mlag +1
-    deltaT = dT.T[CC['j1']].T - dT.T[CC['i1']].T
-    deltaT[np.where(abs(deltaT) > XC._mlag)] = np.nan
-    deltaT = deltaT + XC._mlag
-    # End change
-    CCshift = np.tile(CCshift, len(XC._grid['LON'].flatten())).reshape(len(XC._grid['LON'].flatten()), len(CCshift))
-    IND = deltaT + CCshift
 
-    f = interp1d(np.arange(CC1.size), CC1.flatten(order='F'), kind=XC.lookup_type)
-    CC0 = f(IND.flatten(order='F'))
-    CC0 = np.reshape(CC0, IND.shape, order='F')
+    if XC._minimize == 'correlation':
+        CCshift = np.arange(Nseis0 * (Nseis0 - 1) / 2) * (2 * (XC._mlag + 1) - 1)
+        CCshift = np.tile(CCshift, len(XC._grid['LON'].flatten())).reshape(len(XC._grid['LON'].flatten()), len(CCshift))
+
+        deltaT = dT.T[CC['j1']].T - dT.T[CC['i1']].T
+        deltaT[np.where(abs(deltaT) > XC._mlag)] = np.nan
+        deltaT = deltaT + XC._mlag
+        IND = deltaT + CCshift
+
+        obs_corr = CC['maxC'].flatten()[CC['ii']]
+        all_corr = CC['C'].T[np.where(CC['indx'][0][:] != CC['indx'][1][:])[0]].T
+        f = interp1d(np.arange(all_corr.size), all_corr.flatten(order='F'), kind=XC.lookup_type)
+        pred_corr = f(IND.flatten(order='F'))
+        pred_corr = np.reshape(pred_corr, IND.shape, order='F')
+        residual = obs_corr - pred_corr
+
+    elif XC._minimize == 'time':
+        obs_lag = CC['LAG'].flatten()[CC['ii']]
+        pred_lag = dT.T[CC['j1']].T - dT.T[CC['i1']].T
+        residual = obs_lag - pred_lag
 
     if XC._normType == 1:
-        misfit = np.einsum('...j,j', CC0, CC['W2'], optimize=False) / float(NW2)
-        ind_min = misfit.argmin()
-        # testerror=sum(CC0(ind_min,:))/(NW2-3);
-        # chisquare=CC0*((1/testerror)*ones(length(W2new),1));
-        # chisquare=reshape(chisquare,size(LON1));
+        residual = np.abs(residual)
     elif XC._normType == 2:
-        misfit = np.einsum('...j,j', np.square(CC0), CC['W2'], optimize=False) / float(NW2)
-        ind_min = misfit.argmin()
-        # testerror=sum(CC0(ind_min,:).^2)/(NW2-3);
-        # chisquare=(CC0.^2)*((1/testerror)*ones(length(W2new),1));
-        # chisquare=reshape(chisquare,size(LON1));
+        residual = np.square(residual)
+
+    misfit = np.einsum('...j,j', residual, CC['W2'], optimize=False) / float(NW2)
+    ind_min = misfit.argmin()
 
     lat = XC._grid['LAT'].flatten(order='F')[ind_min]
     lon = XC._grid['LON'].flatten(order='F')[ind_min]
