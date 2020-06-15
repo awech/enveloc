@@ -954,6 +954,10 @@ class XCOR(object):
 		velocity, for example. See obspy taup documentation for more details on phase 
 		nomenclature.
 		Default = [ 's', 'S' ]
+	minimize_type : str, optional
+		'correlation' to minimize the difference between the observed Cmax and predicted C
+		'time' to minimize the difference between the observed and predicted dt
+		Default = 'correlation
 	normType : int, optional
 		Integer 1 or 2 to use an L1 or L2 norm.
 		Default = 1
@@ -1057,7 +1061,7 @@ class XCOR(object):
 	"""
 
 	def __init__(self,st,model=None,grid_size=None,detrend=True,regrid=False,phase_types=['s','S'],
-				 	     normType=1,plot=True,interact=True,output=1,
+				 	     normType=1,plot=True,interact=True,output=1, minimize_type='correlation',
 				 	     Cmin=0.5,Cmax=0.995,sta_min=3,dx_min=0.1,dt=3.0,bootstrap=1,
 				 	     bootstrap_prct=0.04,lookup_type='cubic',rotation=None,dTmax_s=None,
 				 	     rd_freq=None,raw_traces=[],env_hp=[],edge_control=0.03,num_processors=1,
@@ -1126,6 +1130,7 @@ class XCOR(object):
 
 		self.regrid      = regrid
 		self._normType   = normType
+		self._minimize   = minimize_type
 		self.plot        = plot
 		
 		self.interact    = interact
