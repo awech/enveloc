@@ -1349,14 +1349,24 @@ class XCOR(object):
 				print('Error loading file. Dimension mismatch for station '+tr.id)
 
 
-	def locate(self,window_length=None,step=None,offset=0, include_partial_windows=False, nearest_sample=True, dTmax_s=None,num_processors=None):
+	def locate(self,window_list=[], window_length=None, step=None,
+			   offset=0, include_partial_windows=False, nearest_sample=True,
+			   dTmax_s=None,num_processors=None):
 		""" 
 		Main method to locate data provided. This method is actually a wrapper to call main envelope 
 		cross correlation location algorithm `XC_locate`.
 		
 		If using this to locate a single window of data, simply call locate() with no input parameters.
 		All of the relevant details (plot, interact, map_resolution) are properties set in the initial
-		object creation. If using this to iterate over windows and locate, the following parameters must be set:
+		object creation.
+
+		If using this to iterate over a list of user-provided windows, the following parameter must be set:
+
+		Parameters
+		----------
+		window_list : list containting 2x tuples of start and end times (Obspy UTCDatetime format)
+
+		If using this to create and iterate over windows internally, the following parameters must be set:
 
 		Parameters
 		----------
@@ -1393,32 +1403,35 @@ class XCOR(object):
 		"""
 		if num_processors:
 			self._num_processors=num_processors
-		if not window_length:
+		if not window_length and not window_list:
 			if dTmax_s:
 				self.dTmax_s = dTmax_s
 				dTmax 	     = np.round(float(self.dTmax_s)*self.traces[0].stats.sampling_rate)	# can't make a total shift of more than dTmax samples	
 				# self._mlag         = int(2*dTmax) # change on 0ct-30-2017
 				self._mlag         = int(dTmax)
-			
 			loc=XC_locate((self.traces[0].stats.starttime,self.traces[0].stats.endtime),self)
 		else:
 			self._windows=True
+			if window_length:
+				if not step:
+					print('Set step size')
+					return
+
+				from obspy.core.util.misc import get_window_times
+				windows = get_window_times(starttime=self.traces[0].stats.starttime,
+										   endtime=self.traces[0].stats.endtime, window_length=window_length,
+										   step=step, offset=offset, include_partial_windows=include_partial_windows)
+			elif window_list:
+				windows = window_list
+
 			if dTmax_s:
 				self.dTmax_s = dTmax_s
 			else:
-				self.dTmax_s = np.min([.5*window_length,xcorr_utils.station_distances(self.traces).max()/self._v0+self._dt])
-
-			dTmax 	   = np.round(float(self.dTmax_s)*self.traces[0].stats.sampling_rate)	# can't make a total shift of more than dTmax samples	
+				win_len = windows[0][1] - windows[0][0]
+				self.dTmax_s = np.min([.5 * win_len, xcorr_utils.station_distances(self.traces).max() / self._v0 + self._dt])
+			dTmax = np.round(float(self.dTmax_s) * self.traces[0].stats.sampling_rate)	# can't make a total shift of more than dTmax samples
 			# self._mlag         = int(2*dTmax) # change on 0ct-30-2017
-			self._mlag         = int(dTmax)
-
-			if not step:
-				print('Set step size')
-				return
-
-			from obspy.core.util.misc import get_window_times
-			windows = get_window_times(starttime=self.traces[0].stats.starttime,endtime=self.traces[0].stats.endtime,window_length=window_length,
-									   step=step,offset=offset,include_partial_windows=include_partial_windows)
+			self._mlag = int(dTmax)
 
 			bp_traces      = self.traces.copy()
 			if 'env_hp' in self.__dict__:
