@@ -1352,7 +1352,7 @@ class XCOR(object):
 	def calculate_radius(self):
 		"""
 		Use grid to calculate radius (distance) from each grid node to each station
-		Results are associated with each trace such as an attribute 'R'
+		Results are associated with each trace as an attribute 'R'
 
 		"""
 		self._grid=dict({'LON':[],'LAT':[],'DEP':[]})
