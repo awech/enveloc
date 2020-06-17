@@ -1350,7 +1350,11 @@ class XCOR(object):
 				print('Error loading file. Dimension mismatch for station '+tr.id)
 
 	def calculate_radius(self):
+		"""
+		Use grid to calculate radius (distance) from each grid node to each station
+		Results are associated with each trace such as an attribute 'R'
 
+		"""
 		self._grid=dict({'LON':[],'LAT':[],'DEP':[]})
 		if self.rotation:
 			self._grid['LON'],self._grid['LAT'],self._grid['DEP'] = xloc_utils.create_rotated_grid(self.rotation)
