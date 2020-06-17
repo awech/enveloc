@@ -5,7 +5,7 @@ def predictAmp(r, a0=1, freq=3, wavetype='body', Q=None, beta=None):
 
     :param: radius: Distance between source and station (km)
     :param: a0: initial amplitude (default 1)
-    :param: frequency: center frequency (hz, default 3)
+    :param: freq: center frequency (hz, default 3)
     :param: Q: quality factor (default 66 for body wave, 50 for surface wave)
     :param: beta: wave speed km/s (default 2.3 for body wave, 1 for surface wave)
     :return: amplitude in m/s
