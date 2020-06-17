@@ -1,13 +1,14 @@
-from obspy.taup import TauPyModel
-from obspy.geodetics import locations2degrees
-import numpy as np
 import sys
-from enveloc import xcorr_utils
-from enveloc import xloc_utils
 from copy import copy, deepcopy
 from itertools import combinations
+
+import numpy as np
+from obspy.geodetics import locations2degrees
 from obspy.geodetics.base import gps2dist_azimuth
-from datetime import timedelta
+from obspy.taup import TauPyModel
+
+from enveloc import xcorr_utils
+from enveloc import xloc_utils
 
 
 def progress(count, total, status=''):
@@ -1348,6 +1349,22 @@ class XCOR(object):
 			if np.shape(tr.TT)!=np.shape(self._grid['LON']):
 				print('Error loading file. Dimension mismatch for station '+tr.id)
 
+	def calculate_radius(self):
+
+		self._grid=dict({'LON':[],'LAT':[],'DEP':[]})
+		if self.rotation:
+			self._grid['LON'],self._grid['LAT'],self._grid['DEP'] = xloc_utils.create_rotated_grid(self.rotation)
+		else:
+			self._grid['LON'],self._grid['LAT'],self._grid['DEP'] = np.meshgrid(self.grid_size['lons'],self.grid_size['lats'],self.grid_size['deps'])
+
+		for tr in self.traces:
+			dist = []
+			for lat, lon in zip(self._grid['LAT'][:, :, 0].flatten(order='F'), self._grid['LON'][:, :, 0].flatten(order='F')):
+				dist.append(
+					gps2dist_azimuth(tr.stats.coordinates.latitude, tr.stats.coordinates.longitude, lat, lon)[0] / 1000)
+			dist = np.array(dist).reshape(self._grid['LAT'][:, :, 0].shape, order='F')
+			DIST = np.repeat(dist[:, :, np.newaxis], len(self.grid_size['deps']), axis=2)
+			tr.R = np.sqrt(np.square(DIST + tr.stats.coordinates.elevation / 1000) + np.square(self._grid['DEP']))
 
 	def locate(self,window_list=[], window_length=None, step=None,
 			   offset=0, include_partial_windows=False, nearest_sample=True,
