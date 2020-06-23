@@ -1,13 +1,14 @@
-from obspy.taup import TauPyModel
-from obspy.geodetics import locations2degrees
-import numpy as np
 import sys
-from enveloc import xcorr_utils
-from enveloc import xloc_utils
 from copy import copy, deepcopy
 from itertools import combinations
+
+import numpy as np
+from obspy.geodetics import locations2degrees
 from obspy.geodetics.base import gps2dist_azimuth
-from datetime import timedelta
+from obspy.taup import TauPyModel
+
+from enveloc import xcorr_utils
+from enveloc import xloc_utils
 
 
 def progress(count, total, status=''):
@@ -1258,13 +1259,26 @@ class XCOR(object):
 
 			TIMES=[]
 			for x in DEGS:
+				if x==0 and z==0:
+					TIMES.append(0)
+					continue
 				try:
-					PATHS=self.model.get_ray_paths(source_depth_in_km=z,distance_in_degree=x,receiver_depth_in_km=0,phase_list=self.phase_types)
+					PATHS = self.model.get_ray_paths(source_depth_in_km=z, distance_in_degree=x, receiver_depth_in_km=0,
+													 phase_list=self.phase_types)
+					if not PATHS and len(self.phase_types) == 1:
+						PATHS = self.model.get_ray_paths(source_depth_in_km=z, distance_in_degree=x,
+														 receiver_depth_in_km=0,
+														 phase_list=[self.phase_types[0].lower()])
 				except:
-					# an error can occur when a grid node is on a velocity model boundary. When this occurs, add a slight deviation to make sure
-					# get_ray_paths runs correctly
-					small_perturbation=0.00001
-					PATHS=self.model.get_ray_paths(source_depth_in_km=z+small_perturbation,distance_in_degree=x,receiver_depth_in_km=0,phase_list=self.phase_types)
+					# an error can occur when a grid node is on a velocity model boundary. When this occurs,
+					# add a slight deviation to make sure get_ray_paths runs correctly
+					small_perturbation = 0.00001
+					PATHS = self.model.get_ray_paths(source_depth_in_km=z + small_perturbation, distance_in_degree=x,
+													 receiver_depth_in_km=0, phase_list=self.phase_types)
+					if not PATHS and len(self.phase_types) == 1:
+						PATHS = self.model.get_ray_paths(source_depth_in_km=z, distance_in_degree=x,
+														 receiver_depth_in_km=0,
+														 phase_list=[self.phase_types[0].lower()])
 				if self.output > 2:
 					print(self.phase_types)
 					print(PATHS)
