@@ -1,6 +1,7 @@
 import numpy as np
 from obspy.geodetics.base import gps2dist_azimuth
-from scipy.interpolate import interp1d, griddata
+from scipy.interpolate import interp1d
+from scipy import ndimage
 
 np.set_printoptions(precision=3)
 
