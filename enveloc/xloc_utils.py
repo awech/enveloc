@@ -77,24 +77,23 @@ def create_rotated_grid(rotate_params):
     lat0,lon0 = origin
     az        = rotation angle, counterclockwise from East
     x,y,z     = grid to be rotated. +y=North, +x=East, +z=Increasing depth
-    
     """
 
     # convert lat/lon origin into utm x-y origin
     x0, y0, zone_num, zone_let = utm.from_latlon(rotate_params['lat0'], rotate_params['lon0'])
 
     # create blank grids
-    LONS = np.ones((len(rotate_params['x']), len(rotate_params['y']), len(rotate_params['z'])))
-    LATS = np.ones_like(LONS)
-    DEPS = np.ones_like(LONS)
+    LATS = np.ones((len(rotate_params['y']), len(rotate_params['x']), len(rotate_params['z'])))
+    LONS = np.ones_like(LATS)
+    DEPS = np.ones_like(LATS)
 
     # fill out depth grid
     for k, z in enumerate(rotate_params['z']):
         DEPS[:, :, k] = z
 
     # fill out LATS and LONS grids with rotated coordinates
-    for i, x in enumerate(rotate_params['x']):
-        for j, y in enumerate(rotate_params['y']):
+    for i, y in enumerate(rotate_params['y']):
+        for j, x in enumerate(rotate_params['x']):
             newX, newY = rotate_coords(1000 * x, 1000 * y, x0, y0, rotate_params['az'])
             LATS[i, j, :], LONS[i, j, :] = utm.to_latlon(newX, newY, zone_number=zone_num, zone_letter=zone_let)
 
@@ -147,88 +146,37 @@ def CCtoHypocenter(CC, XC):
     return lat, lon, dep, misfit
 
 
+def create_regrid_array(old_array, lat_inds, lon_inds, dep_inds, zoom=5, order=3):
+    new_array = old_array[lat_inds,     :    ,     :    ]
+    new_array = new_array[    :    , lon_inds,     :    ]
+    new_array = new_array[    :    ,     :    , dep_inds]
+
+    new_array = ndimage.zoom(new_array, zoom, order=order, mode='nearest')
+    return new_array
+
+
 def regridHypocenter(XC, misfit):
-    n_newgrid = 20
-    ind_min = misfit.argmin()
-    lat = XC._grid['LAT'].flatten(order='F')[ind_min]
-    lon = XC._grid['LON'].flatten(order='F')[ind_min]
-    dep = XC._grid['DEP'].flatten(order='F')[ind_min]
-
-    d_LAT = np.diff(XC.grid_size['lats']).mean()
-    d_LON = np.diff(XC.grid_size['lons']).mean()
-
-    new_lats = np.linspace(lat - 2 * d_LAT, lat + 2 * d_LAT, n_newgrid)
-    new_lons = np.linspace(lon - 2 * d_LON, lon + 2 * d_LON, n_newgrid)
-
-    new_lats = new_lats[np.where(new_lats > XC.grid_size['lats'][0])[0]]
-    new_lats = new_lats[np.where(new_lats < XC.grid_size['lats'][-1])[0]]
-    new_lons = new_lons[np.where(new_lons > XC.grid_size['lons'][0])[0]]
-    new_lons = new_lons[np.where(new_lons < XC.grid_size['lons'][-1])[0]]
-
     misfit = np.reshape(misfit, np.shape(XC._grid['LON']), order='F')
-    ii = np.unravel_index(misfit.argmin(), np.shape(XC._grid['LON']), order='C')
-    misfit_slice = misfit[:, :, ii[2]]
-    LONS, LATS = np.meshgrid(new_lons, new_lats)
+    inds_min = np.unravel_index(misfit.argmin(), misfit.shape)
 
-    points = np.array(
-        [XC._grid['LON'][:, :, ii[2]].flatten(order='F'),
-         XC._grid['LAT'][:, :, ii[2]].flatten(order='F')]
-    ).T
-    misfit_slice = misfit_slice.flatten(order='F')
-    grid_new = griddata(points, misfit_slice, (LONS, LATS), method='cubic')
-    ii = np.unravel_index(grid_new.argmin(), np.shape(LONS), order='C')
+    if XC.rotation:
+        lat_slice = np.unique(np.clip(np.arange(inds_min[0] - 2, inds_min[0] + 3), 0, len(XC.grid_size['y']) - 1))
+        lon_slice = np.unique(np.clip(np.arange(inds_min[1] - 2, inds_min[1] + 3), 0, len(XC.grid_size['x']) - 1))
+    else:
+        lat_slice = np.unique(np.clip(np.arange(inds_min[0] - 2, inds_min[0] + 3), 0, len(XC.grid_size['lats']) - 1))
+        lon_slice = np.unique(np.clip(np.arange(inds_min[1] - 2, inds_min[1] + 3), 0, len(XC.grid_size['lons']) - 1))
 
-    lat_new = LATS[ii]
-    lon_new = LONS[ii]
-    dep_new = dep
+    dep_slice = np.unique(np.clip(np.arange(inds_min[2] - 2, inds_min[2] + 3), 0, len(XC.grid_size['deps']) - 1))
+    lons_new = create_regrid_array(XC._grid['LON'], lat_slice, lon_slice, dep_slice, zoom=XC.regrid, order=1)
+    lats_new = create_regrid_array(XC._grid['LAT'], lat_slice, lon_slice, dep_slice, zoom=XC.regrid, order=1)
+    deps_new = create_regrid_array(XC._grid['DEP'], lat_slice, lon_slice, dep_slice, zoom=XC.regrid, order=1)
 
-    return lat_new, lon_new, dep_new
+    misfit_new = create_regrid_array(misfit, lat_slice, lon_slice, dep_slice, zoom=XC.regrid, order=3)
 
+    new_inds_min = np.unravel_index(misfit_new.argmin(), misfit_new.shape)
 
-def regridHypocenter_rotated(XC, misfit):
-    import utm
-
-    x0, y0, zone_num, zone_let = utm.from_latlon(XC.rotation['lat0'], XC.rotation['lon0'])
-
-    n_newgrid = 20
-    ind_min = misfit.argmin()
-    lat = XC._grid['LAT'].flatten(order='F')[ind_min]
-    lon = XC._grid['LON'].flatten(order='F')[ind_min]
-    dep = XC._grid['DEP'].flatten(order='F')[ind_min]
-
-    d_Y = np.diff(XC.grid_size['y']).mean()
-    d_X = np.diff(XC.grid_size['x']).mean()
-
-    x_loc, y_loc, zone_num, zone_let = utm.from_latlon(lat, lon)
-    new_ys = np.linspace((y_loc - y0) / 1000 - 2 * d_Y, (y_loc - y0) / 1000 + 2 * d_Y, n_newgrid)
-    new_xs = np.linspace((x_loc - x0) / 1000 - 2 * d_X, (x_loc - x0) / 1000 + 2 * d_X, n_newgrid)
-
-    new_ys = new_ys[np.where(new_ys > XC.grid_size['y'][0])[0]]
-    new_ys = new_ys[np.where(new_ys < XC.grid_size['y'][-1])[0]]
-    new_xs = new_xs[np.where(new_xs > XC.grid_size['x'][0])[0]]
-    new_xs = new_xs[np.where(new_xs < XC.grid_size['x'][-1])[0]]
-
-    misfit = np.reshape(misfit, np.shape(XC._grid['LON']), order='F')
-    ii = np.unravel_index(misfit.argmin(), np.shape(XC._grid['LON']), order='C')
-    misfit_slice = misfit[:, :, ii[2]]
-
-    LONS = np.ones((len(new_xs), len(new_ys)))
-    LATS = np.ones_like(LONS)
-    for i, x in enumerate(new_xs):
-        for j, y in enumerate(new_ys):
-            newX, newY = rotate_coords(1000 * x, 1000 * y, x0, y0, XC.rotation['az'])
-            LATS[i, j], LONS[i, j] = utm.to_latlon(newX, newY, zone_number=zone_num, zone_letter=zone_let)
-
-    points = np.array(
-        [XC._grid['LON'][:, :, ii[2]].flatten(order='F'),
-         XC._grid['LAT'][:, :, ii[2]].flatten(order='F')]
-    ).T
-    misfit_slice = misfit_slice.flatten(order='F')
-    grid_new = griddata(points, misfit_slice, (LONS, LATS), method='cubic')
-    ii = np.unravel_index(grid_new.argmin(), np.shape(LONS), order='C')
-
-    lat_new = LATS[ii]
-    lon_new = LONS[ii]
-    dep_new = dep
+    lat_new = lats_new[new_inds_min]
+    lon_new = lons_new[new_inds_min]
+    dep_new = deps_new[new_inds_min]
 
     return lat_new, lon_new, dep_new

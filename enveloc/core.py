@@ -260,10 +260,7 @@ def XC_locate(win,XC):
 
 			""" Regrid if XC.regrid==True """
 			if XC.regrid:
-				if XC.rotation:
-					tmp_lat, tmp_lon, tmp_dep = xloc_utils.regridHypocenter_rotated(XC,misfit)
-				else:
-					tmp_lat, tmp_lon, tmp_dep = xloc_utils.regridHypocenter(XC,misfit)
+				tmp_lat, tmp_lon, tmp_dep = xloc_utils.regridHypocenter(XC,misfit)
 
 
 			####################################################
