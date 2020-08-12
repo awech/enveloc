@@ -121,7 +121,7 @@ def XC_locate(win,XC):
 	if len(st_tmp) < XC.sta_min:
 		if XC.output > 0:
 			print('WARNING FROM XC_locate: too many traces with no data')
-			return location(starttime=win[0],endtime=win[1],channels=xloc_utils.channel_list(st_tmp)) 	# return latitude, longitude, depth # return because these envelopes suck.
+		return location(starttime=win[0],endtime=win[1],channels=xloc_utils.channel_list(st_tmp)) 	# return latitude, longitude, depth # return because these envelopes suck.
 
 	""" Remove traces with flagged gaps """
 	for tr in st_tmp:
@@ -131,7 +131,7 @@ def XC_locate(win,XC):
 	if len(st_tmp) < XC.sta_min:
 		if XC.output > 0:
 			print('WARNING FROM XC_locate: too many traces with no data')
-			return location(starttime=win[0],endtime=win[1],channels=xloc_utils.channel_list(st_tmp)) 	# return latitude, longitude, depth # return because these envelopes suck.
+		return location(starttime=win[0],endtime=win[1],channels=xloc_utils.channel_list(st_tmp)) 	# return latitude, longitude, depth # return because these envelopes suck.
 
 
 	""" Remove traces with triggers within time window """
@@ -142,7 +142,7 @@ def XC_locate(win,XC):
 	if len(st_tmp) < XC.sta_min:
 		if XC.output > 0:
 			print('WARNING FROM XC_locate: too many traces with triggers')
-			return location(starttime=win[0],endtime=win[1],channels=xloc_utils.channel_list(st_tmp)) 	# return latitude, longitude, depth # return because these envelopes suck.
+		return location(starttime=win[0],endtime=win[1],channels=xloc_utils.channel_list(st_tmp)) 	# return latitude, longitude, depth # return because these envelopes suck.
 
 
 	####################################################
