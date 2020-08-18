@@ -226,7 +226,7 @@ def XC_plot(CC,XC,CC1,misfit,loc):
 		h_trace.append(plt.plot(mdates.num2date(T),i+tr.data/tr.data.max(),color=trace_color0,linewidth=0.2))
 		plt.text(mdates.date2num(tr.stats.endtime.datetime),i,' {:.1f}s, {:.1f}'.format(tr.dTs,tr.staW/len(CC['st'])),fontsize=6)
 	plt.text(mdates.date2num(tr.stats.endtime.datetime),i+1,' time, weight',fontsize=5)
-	trace_ax.set_yticks(np.arange(23))
+	trace_ax.set_yticks(np.arange(len(st_sort)))
 	trace_ax.set_yticklabels([tr.stats.station +'.'+tr.stats.channel for tr in st_sort])
 
 	plt.xticks(np.linspace(mdates.date2num(tr.stats.starttime.datetime),mdates.date2num(tr.stats.endtime.datetime),4))
@@ -282,6 +282,8 @@ def XC_plot(CC,XC,CC1,misfit,loc):
 						msft[:,:,ii[2]],40,
                 		transform=ccrs.PlateCarree(),
                 		cmap='viridis_r')
+	msft_min=msft[:,:,ii[2]].min()
+	msft_max=msft[:,:,ii[2]].max()
 	misfit_ax1.plot(loc.longitude,loc.latitude,marker='*',color='firebrick',markeredgewidth=0.1,markeredgecolor='firebrick',markersize=6)
 	misfit_ax1.plot(stalons,stalats,marker='^',color='gray',markeredgewidth=0.1,markeredgecolor='gray',markersize=4,linewidth=0)
 	gl2 = misfit_ax1.gridlines(crs=ccrs.PlateCarree(), draw_labels=True,
@@ -304,7 +306,7 @@ def XC_plot(CC,XC,CC1,misfit,loc):
 	map_aspect = (meridians[-1]-meridians[0])/((parallels[-1]-parallels[0])*111.1)
 	if map_aspect > 1:
 		misfit_ax2.set_aspect((meridians[-1]-meridians[0])/((parallels[-1]-parallels[0])*111.1))
-	plt.contourf(XC._grid['LON'][ii[0],:,:], -XC._grid['DEP'][ii[0],:,:], msft[ii[0],:,:],40,cmap='viridis_r')
+	plt.contourf(XC._grid['LON'][ii[0],:,:], -XC._grid['DEP'][ii[0],:,:], msft[ii[0],:,:],40,cmap='viridis_r',vmin=msft_min,vmax=msft_max)
 	plt.plot(loc.longitude,-loc.depth,'*',markerfacecolor='firebrick',markeredgecolor='firebrick',markeredgewidth=0.1)
 	misfit_ax2.yaxis.tick_right()
 	plt.ylabel('Depth',fontsize=8)

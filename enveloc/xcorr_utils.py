@@ -1,5 +1,6 @@
 import numpy as np
 from scipy.signal import correlate
+from scipy.interpolate import interp1d
 from itertools import combinations, combinations_with_replacement
 from obspy.geodetics.base import gps2dist_azimuth
 from obspy import Stream
@@ -43,7 +44,7 @@ def station_distances(st):
     return Delta
 
 
-def station_xcorr(st,mlag):
+def station_xcorr(st, mlag, minimize_type, lookup_type):
     tC = np.linspace(-mlag,mlag,2*mlag+1)/st[0].stats.sampling_rate
     C = np.zeros( (len(tC), int(len(st)+len(st)*(len(st)-1)/2)) )
     LAG = np.zeros((len(st),len(st)))
@@ -66,11 +67,22 @@ def station_xcorr(st,mlag):
         # tmp = tmp[mid-mlag-1:mid+mlag]
         tmp = tmp[mid-mlag:mid+mlag+1]     # Oct-30-2017 change when switching from mlag=int(2*dTmax) to mlag=int(dTmax)
         C[:,i] = tmp
-        maxC[comb[0],comb[1]]=tmp.max()
-        maxC[comb[1],comb[0]]=tmp.max()
-        LAG[comb[0],comb[1]]=tC[tmp.argmax()]
-        LAG[comb[1],comb[0]]=-tC[tmp.argmax()]
-           
+
+        if minimize_type == 'time':
+            f1 = interp1d(np.linspace(0,1,len(tmp)), tmp, kind=lookup_type)
+            tmp_interp = f1(np.linspace(0,1,100*len(tmp)))
+            tC_interp = np.linspace(tC[0],tC[-1],len(tmp_interp))
+
+            maxC[comb[0],comb[1]]=tmp_interp.max()
+            maxC[comb[1],comb[0]]=tmp_interp.max()
+            LAG[comb[0],comb[1]]=tC_interp[tmp_interp.argmax()]
+            LAG[comb[1],comb[0]]=-tC_interp[tmp_interp.argmax()]
+        else:
+            maxC[comb[0],comb[1]]=tmp.max()
+            maxC[comb[1],comb[0]]=tmp.max()
+            LAG[comb[0],comb[1]]=tC[tmp.argmax()]
+            LAG[comb[1],comb[0]]=-tC[tmp.argmax()]
+
     indx=np.array([tmp_i,tmp_j,np.where(tmp_I.flatten())[0]])
 
     return C,tC,indx,LAG,maxC
@@ -138,7 +150,7 @@ def initial_correlation(XC,st):
         Delta = station_distances(st)
         Delta = Delta.flatten()[ii]
         if not (drop_key>-1).any():
-            C,tC,indx,LAG,maxC=station_xcorr(st,XC._mlag)
+            C,tC,indx,LAG,maxC=station_xcorr(st,XC._mlag,XC._minimize,XC.lookup_type)
             Chat  = maxC.flatten()[ii]  # vector form of the maximum correlation coeffient for each pair
             count = 0
         else:

@@ -1,13 +1,14 @@
-from obspy.taup import TauPyModel
-from obspy.geodetics import locations2degrees
-import numpy as np
 import sys
-from enveloc import xcorr_utils
-from enveloc import xloc_utils
 from copy import copy, deepcopy
 from itertools import combinations
+
+import numpy as np
+from obspy.geodetics import locations2degrees
 from obspy.geodetics.base import gps2dist_azimuth
-from datetime import timedelta
+from obspy.taup import TauPyModel
+
+from enveloc import xcorr_utils
+from enveloc import xloc_utils
 
 
 def progress(count, total, status=''):
@@ -120,7 +121,7 @@ def XC_locate(win,XC):
 	if len(st_tmp) < XC.sta_min:
 		if XC.output > 0:
 			print('WARNING FROM XC_locate: too many traces with no data')
-			return location(starttime=win[0],endtime=win[1],channels=xloc_utils.channel_list(st_tmp)) 	# return latitude, longitude, depth # return because these envelopes suck.
+		return location(starttime=win[0],endtime=win[1],channels=xloc_utils.channel_list(st_tmp)) 	# return latitude, longitude, depth # return because these envelopes suck.
 
 	""" Remove traces with flagged gaps """
 	for tr in st_tmp:
@@ -130,7 +131,7 @@ def XC_locate(win,XC):
 	if len(st_tmp) < XC.sta_min:
 		if XC.output > 0:
 			print('WARNING FROM XC_locate: too many traces with no data')
-			return location(starttime=win[0],endtime=win[1],channels=xloc_utils.channel_list(st_tmp)) 	# return latitude, longitude, depth # return because these envelopes suck.
+		return location(starttime=win[0],endtime=win[1],channels=xloc_utils.channel_list(st_tmp)) 	# return latitude, longitude, depth # return because these envelopes suck.
 
 
 	""" Remove traces with triggers within time window """
@@ -141,7 +142,7 @@ def XC_locate(win,XC):
 	if len(st_tmp) < XC.sta_min:
 		if XC.output > 0:
 			print('WARNING FROM XC_locate: too many traces with triggers')
-			return location(starttime=win[0],endtime=win[1],channels=xloc_utils.channel_list(st_tmp)) 	# return latitude, longitude, depth # return because these envelopes suck.
+		return location(starttime=win[0],endtime=win[1],channels=xloc_utils.channel_list(st_tmp)) 	# return latitude, longitude, depth # return because these envelopes suck.
 
 
 	####################################################
@@ -259,10 +260,7 @@ def XC_locate(win,XC):
 
 			""" Regrid if XC.regrid==True """
 			if XC.regrid:
-				if XC.rotation:
-					tmp_lat, tmp_lon, tmp_dep = xloc_utils.regridHypocenter_rotated(XC,misfit)
-				else:
-					tmp_lat, tmp_lon, tmp_dep = xloc_utils.regridHypocenter(XC,misfit)
+				tmp_lat, tmp_lon, tmp_dep = xloc_utils.regridHypocenter(XC,misfit)
 
 
 			####################################################
@@ -954,6 +952,10 @@ class XCOR(object):
 		velocity, for example. See obspy taup documentation for more details on phase 
 		nomenclature.
 		Default = [ 's', 'S' ]
+	minimize_type : str, optional
+		'correlation' to minimize the difference between the observed Cmax and predicted C
+		'time' to minimize the difference between the observed and predicted dt
+		Default = 'correlation
 	normType : int, optional
 		Integer 1 or 2 to use an L1 or L2 norm.
 		Default = 1
@@ -1057,7 +1059,7 @@ class XCOR(object):
 	"""
 
 	def __init__(self,st,model=None,grid_size=None,detrend=True,regrid=False,phase_types=['s','S'],
-				 	     normType=1,plot=True,interact=True,output=1,
+				 	     normType=1,plot=True,interact=True,output=1, minimize_type='correlation',
 				 	     Cmin=0.5,Cmax=0.995,sta_min=3,dx_min=0.1,dt=3.0,bootstrap=1,
 				 	     bootstrap_prct=0.04,lookup_type='cubic',rotation=None,dTmax_s=None,
 				 	     rd_freq=None,raw_traces=[],env_hp=[],edge_control=0.03,num_processors=1,
@@ -1126,6 +1128,7 @@ class XCOR(object):
 
 		self.regrid      = regrid
 		self._normType   = normType
+		self._minimize   = minimize_type
 		self.plot        = plot
 		
 		self.interact    = interact
@@ -1253,13 +1256,26 @@ class XCOR(object):
 
 			TIMES=[]
 			for x in DEGS:
+				if x==0 and z==0:
+					TIMES.append(0)
+					continue
 				try:
-					PATHS=self.model.get_ray_paths(source_depth_in_km=z,distance_in_degree=x,receiver_depth_in_km=0,phase_list=self.phase_types)
+					PATHS = self.model.get_ray_paths(source_depth_in_km=z, distance_in_degree=x, receiver_depth_in_km=0,
+													 phase_list=self.phase_types)
+					if not PATHS and len(self.phase_types) == 1:
+						PATHS = self.model.get_ray_paths(source_depth_in_km=z, distance_in_degree=x,
+														 receiver_depth_in_km=0,
+														 phase_list=[self.phase_types[0].lower()])
 				except:
-					# an error can occur when a grid node is on a velocity model boundary. When this occurs, add a slight deviation to make sure
-					# get_ray_paths runs correctly
-					small_perturbation=0.00001
-					PATHS=self.model.get_ray_paths(source_depth_in_km=z+small_perturbation,distance_in_degree=x,receiver_depth_in_km=0,phase_list=self.phase_types)
+					# an error can occur when a grid node is on a velocity model boundary. When this occurs,
+					# add a slight deviation to make sure get_ray_paths runs correctly
+					small_perturbation = 0.00001
+					PATHS = self.model.get_ray_paths(source_depth_in_km=z + small_perturbation, distance_in_degree=x,
+													 receiver_depth_in_km=0, phase_list=self.phase_types)
+					if not PATHS and len(self.phase_types) == 1:
+						PATHS = self.model.get_ray_paths(source_depth_in_km=z, distance_in_degree=x,
+														 receiver_depth_in_km=0,
+														 phase_list=[self.phase_types[0].lower()])
 				if self.output > 2:
 					print(self.phase_types)
 					print(PATHS)
@@ -1344,14 +1360,24 @@ class XCOR(object):
 				print('Error loading file. Dimension mismatch for station '+tr.id)
 
 
-	def locate(self,window_length=None,step=None,offset=0, include_partial_windows=False, nearest_sample=True, dTmax_s=None,num_processors=None):
+	def locate(self,window_list=[], window_length=None, step=None,
+			   offset=0, include_partial_windows=False, nearest_sample=True,
+			   dTmax_s=None,num_processors=None):
 		""" 
 		Main method to locate data provided. This method is actually a wrapper to call main envelope 
 		cross correlation location algorithm `XC_locate`.
 		
 		If using this to locate a single window of data, simply call locate() with no input parameters.
 		All of the relevant details (plot, interact, map_resolution) are properties set in the initial
-		object creation. If using this to iterate over windows and locate, the following parameters must be set:
+		object creation.
+
+		If using this to iterate over a list of user-provided windows, the following parameter must be set:
+
+		Parameters
+		----------
+		window_list : list containting 2x tuples of start and end times (Obspy UTCDatetime format)
+
+		If using this to create and iterate over windows internally, the following parameters must be set:
 
 		Parameters
 		----------
@@ -1388,32 +1414,35 @@ class XCOR(object):
 		"""
 		if num_processors:
 			self._num_processors=num_processors
-		if not window_length:
+		if not window_length and not window_list:
 			if dTmax_s:
 				self.dTmax_s = dTmax_s
 				dTmax 	     = np.round(float(self.dTmax_s)*self.traces[0].stats.sampling_rate)	# can't make a total shift of more than dTmax samples	
 				# self._mlag         = int(2*dTmax) # change on 0ct-30-2017
 				self._mlag         = int(dTmax)
-			
 			loc=XC_locate((self.traces[0].stats.starttime,self.traces[0].stats.endtime),self)
 		else:
 			self._windows=True
+			if window_length:
+				if not step:
+					print('Set step size')
+					return
+
+				from obspy.core.util.misc import get_window_times
+				windows = get_window_times(starttime=self.traces[0].stats.starttime,
+										   endtime=self.traces[0].stats.endtime, window_length=window_length,
+										   step=step, offset=offset, include_partial_windows=include_partial_windows)
+			elif window_list:
+				windows = window_list
+
 			if dTmax_s:
 				self.dTmax_s = dTmax_s
 			else:
-				self.dTmax_s = np.min([.5*window_length,xcorr_utils.station_distances(self.traces).max()/self._v0+self._dt])
-
-			dTmax 	   = np.round(float(self.dTmax_s)*self.traces[0].stats.sampling_rate)	# can't make a total shift of more than dTmax samples	
+				win_len = windows[0][1] - windows[0][0]
+				self.dTmax_s = np.min([.5 * win_len, xcorr_utils.station_distances(self.traces).max() / self._v0 + self._dt])
+			dTmax = np.round(float(self.dTmax_s) * self.traces[0].stats.sampling_rate)	# can't make a total shift of more than dTmax samples
 			# self._mlag         = int(2*dTmax) # change on 0ct-30-2017
-			self._mlag         = int(dTmax)
-
-			if not step:
-				print('Set step size')
-				return
-
-			from obspy.core.util.misc import get_window_times
-			windows = get_window_times(starttime=self.traces[0].stats.starttime,endtime=self.traces[0].stats.endtime,window_length=window_length,
-									   step=step,offset=offset,include_partial_windows=include_partial_windows)
+			self._mlag = int(dTmax)
 
 			bp_traces      = self.traces.copy()
 			if 'env_hp' in self.__dict__:
