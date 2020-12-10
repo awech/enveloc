@@ -15,9 +15,9 @@ utm<br>
 If you use this package in your work, please cite the following paper: Wech, A.G., and K.C. Creager (2008), Automatic detection and location of Cascadia tremor, Geophys. Res. Lett., 35, L20302.
 
 ### Installation
-Use anaconda to create a new environment:<br>
+Use anaconda to create a new environment, and install Python v3.8 and cartopy (I had troubles installing cartopy without anaconda):<br>
 
-`conda create -n enveloc python=3.8 obspy=1.2.2 numpy cartopy scikit-learn utm`<br>
+`conda create -n enveloc python=3.8 cartopy`<br>
 
 Next activate that environment:<br>
 
