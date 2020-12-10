@@ -10,11 +10,11 @@ I strongly recommend installing *enveloc* using conda because this will:
 
 If you do not have either a miniconda or anaconda installation you can follow
 the |conda-install| instructions. Once anaconda (or miniconda, my preference) is installed,
-create a new conda environment with the following:
+create a new conda environment with Python v3.8 and cartopy (I had troubles installing cartopy without anaconda) with the following:
 
 .. code-block:: bash
 
-    conda create -n enveloc python=3.8 numpy obspy=1.2.2 cartopy scikit-learn utm
+    conda create -n enveloc python=3.8 cartopy
 
 Next activate that environment by calling:
 
