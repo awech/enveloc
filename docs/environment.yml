@@ -8,7 +8,7 @@ dependencies:
   - bzip2=1.0.8
   - ca-certificates=2020.4.5.1
   - cairo=1.16.0
-  - cartopy=0.18.0
+  - cartopy=0.17.0
   - certifi=2020.4.5.1
   - cffi=1.14.0
   - cfitsio=3.470
@@ -67,7 +67,7 @@ dependencies:
   - matplotlib-base=3.2.1
   - ncurses=6.1
   - numpy=1.18.4
-  - obspy=1.2.1
+  - obspy=1.2.2
   - olefile=0.46
   - openjpeg=2.3.1
   - openssl=1.1.1g
