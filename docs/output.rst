@@ -16,7 +16,7 @@ The location *loc* of a single window of data (e.g. :ref:`here<locate a signal>`
  * starttime
  * endtime
  * channels
- * reduced_displacement 
+ * reduced_displacement (optional...and not well tested)
 
  Each of these values are set to *None* , *[]*, or *np.nan* if no location was determined (too few stations correlating, location on grid edge, data quality issues, etc.).
 

@@ -14,7 +14,7 @@ create a new conda environment with the following:
 
 .. code-block:: bash
 
-    conda create -n enveloc python=3 numpy obspy=1.2.1 cartopy scikit-learn utm
+    conda create -n enveloc python=3.8 numpy obspy=1.2.2 cartopy scikit-learn utm
 
 Next activate that environment by calling:
 

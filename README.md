@@ -17,7 +17,7 @@ If you use this package in your work, please cite the following paper: Wech, A.G
 ### Installation
 Use anaconda to create a new environment:<br>
 
-`conda create -n enveloc python=3 obspy=1.2.1 numpy cartopy scikit-learn utm`<br>
+`conda create -n enveloc python=3.8 obspy=1.2.2 numpy cartopy scikit-learn utm`<br>
 
 Next activate that environment:<br>
 
