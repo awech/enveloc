@@ -9,14 +9,14 @@ setup(
   name = 'enveloc',
   packages = find_packages(),
   include_package_data=True,
-  version = '1.1.2',
+  version = '1.1.3',
   license='LGPL',
   description = 'enveloc - envelope cross-correlation location method',
   long_description = long_description,
   author = 'Aaron Wech',
   author_email = 'awech@usgs.gov',
   url = 'https://github.com/awech/enveloc',
-  download_url = 'https://github.com/awech/enveloc/archive/v1.1.2.tar.gz',
+  download_url = 'https://github.com/awech/enveloc/archive/v1.1.3.tar.gz',
   keywords = ['envelope cross correlation', 'seimsology', 'tremor'],
   install_requires=[
           'numpy',
@@ -27,10 +27,6 @@ setup(
           'cartopy',
           'scikit-learn',
           'utm',
-      ],
-  setup_requires=[
-          'numpy',
-          'proj',
       ],
   classifiers=[
     'Development Status :: 4 - Beta',
