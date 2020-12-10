@@ -1314,6 +1314,9 @@ class XCOR(object):
 		if self.rotation:
 			Xs  = self.grid_size['x']
 			Ys  = self.grid_size['y']
+			lat0= self.rotation['lat0']
+			lon0= self.rotation['lon0']
+			az  = self.rotation['az']
 		else:
 			lats  = self.grid_size['lats']
 			lons  = self.grid_size['lons']
@@ -1323,7 +1326,7 @@ class XCOR(object):
 			stas[tr.id.replace('.','_')]=tr.TT
 		
 		if self.rotation:
-			np.savez(outfile,y=Ys,     x=Xs,     deps=deps,model=model,phase_types=phase_types,stations=stas,**stas)
+			np.savez(outfile,y=Ys,x=Xs,deps=deps,az=az,lat0=lat0,lon0=lon0,model=model,phase_types=phase_types,stations=stas,**stas)
 		else:
 			np.savez(outfile,lats=lats,lons=lons,deps=deps,model=model,phase_types=phase_types,stations=stas,**stas)
 
