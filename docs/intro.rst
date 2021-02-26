@@ -86,7 +86,7 @@ A few examples:
 #. Tectonic tremor
 	*enveloc* was orignally designed to search through continuous data and attempt a location on overlapping 5-minute
 	windows. *enveloc* allows you to input long data streams, and internally it will iterate through user-defined window
-	slices and attempt to a location for each one. The output can serve as the first step in detecting tremor 
+	slices and attempt to locate each one. The output can serve as the first step in detecting tremor
 	(more on that below).
 	
 
@@ -126,4 +126,4 @@ Envelope cross correlation is not always the best method to use, and using *enve
 #. **AUTOMATION IS HARD.** *enveloc* has a lot of internal checks and quality-control measures to try and handle the most
    conspicuous gotchas, but nothing is bulletproof. Even traditional earthquake locations (which we've known how to
    do for a long time now) require a human analyst. Trying to automate the detection and location of messy seimsicity
-   requires and iterative approach that necessitates looking at the data.
+   requires an iterative approach that necessitates looking at the data.
