@@ -796,7 +796,7 @@ class detections(object):
 			# scale time to match distance
 			t   = self.detections.get_times()[0]
 			dtime  = np.array([(t0.datetime-t.min().datetime).total_seconds()/60. for t0 in t])
-			dtime  = dtime*(dx/np.float(dt))
+			dtime  = dtime*(dx/ float(dt))
 			# put distance and time together
 			X   = np.array([x,y,dtime]).T
 
