@@ -2,10 +2,6 @@
 Python package to perform envelope cross-correlation location in seismology
 
 ### Dependencies
-numpy<br>
-scipy<br>
-matplotlib<br>
-proj<br>
 obspy<br>
 cartopy<br>
 scikit-learn<br>
@@ -15,9 +11,9 @@ utm<br>
 If you use this package in your work, please cite the following paper: Wech, A.G., and K.C. Creager (2008), Automatic detection and location of Cascadia tremor, Geophys. Res. Lett., 35, L20302.
 
 ### Installation
-Use anaconda to create a new environment, and install Python v3.8 and cartopy (I had troubles installing cartopy without anaconda):<br>
+Use anaconda to create a new environment, and install Python v3.11:<br>
 
-`conda create -n enveloc python=3.8 cartopy`<br>
+`conda create -n enveloc python=3.11`<br>
 
 Next activate that environment:<br>
 

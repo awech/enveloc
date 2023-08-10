@@ -10,11 +10,11 @@ I strongly recommend installing *enveloc* using conda because this will:
 
 If you do not have either a miniconda or anaconda installation you can follow
 the |conda-install| instructions. Once anaconda (or miniconda, my preference) is installed,
-create a new conda environment with Python v3.8 and cartopy (I had troubles installing cartopy without anaconda) with the following:
+create a new conda environment with Python v3.11 with the following:
 
 .. code-block:: bash
 
-    conda create -n enveloc python=3.8 cartopy
+    conda create -n enveloc python=3.11
 
 Next activate that environment by calling:
 
@@ -52,17 +52,12 @@ To test the install:
 
 Python Version
 --------------
-The code has been tested on Python 3.7 and 3.8. It may work on other (possibly even 2.7),
-but no promises.
+The code has been tested on Python 3.11. 
 
 
 Dependencies
 ------------
-* numpy
-* scipy
-* matplotlib
 * obspy
-* proj
 * cartopy
 * scikit-learn
 * utm
@@ -70,5 +65,4 @@ Dependencies
 
 Notes
 -----
-Most packages are available through PyPI, but I have been unsuccessful in install proj (on which cartopy relies) 
-directly through pip, hence the use of anaconda (that and it makes life easier anyway).
+All packages should be available through PyPI. I had troubles with installing *cartopy* using pip with versions of Python <3.9. If you can get *cartopy* working (e.g. via conda install), *enveloc* should still work with earlier Python versions 3.7 & 3.8.
