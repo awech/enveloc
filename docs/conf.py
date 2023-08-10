@@ -63,7 +63,7 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
 # autodoc_member_order = 'bysource'
 
-# master_doc = 'index'
+master_doc = 'index'
 
 
 # -- Options for HTML output -------------------------------------------------
