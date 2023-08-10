@@ -1,0 +1,4 @@
+obspy
+cartopy
+scikit-learn
+utm
