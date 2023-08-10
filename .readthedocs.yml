@@ -7,7 +7,7 @@ sphinx:
   builder: html
 
 python:
-   version: 3.7
+   version: 3.11
 
 conda:
   environment: docs/environment.yml
