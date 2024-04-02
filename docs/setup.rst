@@ -183,7 +183,7 @@ complete information Obspy makes the following assumptions:
 Alternatively, if you want to search using a constant velocity, like a surface wave velocity, you can
 provide this constant as a variable to *enveloc*. In this case the default velocity model is used, but 
 only for ray-tracing purposes, and the actual velocity and resulting traveltimes are superseded by the 
-constant velocity provided. More details provided in :py:class:`~.enveloc.core.XCOR` class.
+constant velocity provided. More details provided in :py:class:`~.enveloc.core.XCOR` :ref:`class<xcor class>`.
 
 .. _grid section:
 
