@@ -47,14 +47,14 @@ Contents:
 ---------
 
 .. toctree::
-   :numbered:
-   :maxdepth: 1
+    :numbered:
+    :maxdepth: 1
 
-   intro
-   installation
-   setup
-   tutorial
-   output
-   xcor
-   event_list
-   detections
+    intro
+    installation
+    setup
+    tutorial
+    output
+    xcor
+    event_list
+    detections

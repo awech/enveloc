@@ -62,7 +62,7 @@ def latlon2xy(loc):
     Parameters
     ----------
     loc : obj, required
-            location object returned from `XC_locate`
+            location object returned from :meth:`XC_locate()`
 
     """
     lats = np.array(loc.detections.get_lats())
@@ -109,7 +109,7 @@ def XC_locate(win, XC):
     win : list, required
             2 element list of obspy UTCDateTime start and end times for which to cut out a window of seismic data
     XC : obj, required
-            object created by `XCOR` class
+            object created by :class:`XCOR` class
 
     """
 
@@ -446,7 +446,7 @@ class location(object):
 
 class event_list(object):
     """
-    Define an events object, which is a list of :class:`core.location` objects
+    Define an events object, which is a list of :class:`~enveloc.core.location` objects
 
     """
 
@@ -608,7 +608,7 @@ class event_list(object):
     def calc_reduced_displacement(self, st, XC, num_processors=1):
         """
         Method to calculate a reduced displacement for all locations in the events list.
-        The method updates the `reduced_displacement` property in each location object. `XCOR` can also do
+        The method updates the `reduced_displacement` property in each location object. :class:`XCOR` can also do
         this internally while generating a location, but the idea with this method is to apply the calculation
         after obtaining all initial locations and throwing out bad locations via clustering or maximum horizontal
         scatter. That way you are not spending computation time for events you will never use.
@@ -619,7 +619,7 @@ class event_list(object):
         st : stream, required
                 Obspy stream of envelopes. Each trace must have stats.coordinates.latitude/longitude
         XC : `XCOR` object, required
-                `XCOR` object used to obtain locations within the event list
+                :class:`XCOR` object used to obtain locations within the event list
         num_processors : int, optional
                 Optional integer to parallelize when set >1, but this doesn't appear to be faster. Default = 1.
 
@@ -662,12 +662,12 @@ class event_list(object):
 
         max_scatter : float, optional
                 maximum horizontal scatter allowed for a give locationDefault = 3.0
-        rm_nan_loc : boolean, optional
+        rm_nan_loc : bool, optional
                 `True` will remove all locations with `nan` locations. Default = `True`
-        rm_nan_err : boolean, optional
+        rm_nan_err : bool, optional
                   `True` will remove all locations with nan horizontal_scatter (not appropriate
                   if not bootstrapping to obtain horizontal_scatter, eg. bootstrap=1), Default = `True`
-        inplace : boolean, optional
+        inplace : bool, optional
                 `True` to operate in place. `False` to return a copy. Default = `False`
 
         """
@@ -704,7 +704,7 @@ class event_list(object):
         Parameters
         ----------
 
-        inplace : boolean, optional
+        inplace : bool, optional
                 `True` to operate in place or `False` to return a copy. Default = `False`
 
         """
@@ -728,7 +728,7 @@ class event_list(object):
         distance : float, optional
                 maximum horizontal distance (km) below which the locations of events
                 with identical starttimes are averaged. Default = 25.0.
-        inplace : boolean, optional
+        inplace : bool, optional
                 `True` to operate in place or `False` to return a copy. Default = `False`
 
         """
@@ -829,7 +829,7 @@ class event_list(object):
         ----------
 
         XC : `XCOR` object, required
-                `XCOR` object used to create `event_list` object
+                :class:`XCOR` object used to create `event_list` object
 
         """
 
@@ -849,7 +849,7 @@ class event_list(object):
 
 class detections(object):
     """
-    `detections` object. Contains different 'event_list' objects as properties. This
+    `detections` object. Contains different :class:`~enveloc.core.event_list` objects as properties. This
     object allows for lists all events, clustered events, and unclustered events to
     exist all in one place and be modified using the same class methods.
 
@@ -1013,12 +1013,12 @@ class detections(object):
 
         max_scatter : float, optional
                 maximum horizontal scatter allowed for a give locationDefault = 3.0
-        rm_nan_loc : boolean, optional
+        rm_nan_loc : bool, optional
                 `True` will remove all locations with `nan` locations. Default = `True`
-        rm_nan_err : boolean, optional
+        rm_nan_err : bool, optional
                   `True` will remove all locations with nan horizontal_scatter (not appropriate
                   if not bootstrapping to obtain horizontal_scatter, eg. bootstrap=1), Default = `True`
-        inplace : boolean, optional
+        inplace : bool, optional
                 `True` to operate in place. `False` to return a copy. Default = `False`
 
         """
@@ -1050,7 +1050,7 @@ class detections(object):
         distance : float, optional
                 maximum horizontal distance (km) below which the locations of events with
                 identical starttimes are averaged. Default = 25.0.
-        inplace : boolean, optional
+        inplace : bool, optional
                 `True` to operate in place or `False` to return a copy. Default = `False`
 
         """
@@ -1076,7 +1076,7 @@ class detections(object):
         ----------
 
         XC : `XCOR` object, required
-                `XCOR` object used to create `detections` object
+                :class:`XCOR` object used to create `detections` object
 
         """
 
@@ -1101,9 +1101,9 @@ class detections(object):
 
 class XCOR(object):
     """
-    XCOR is the main class object that needs to be set up in order to get a location.
+    :class:`XCOR` is the main class object that needs to be set up in order to get a location.
     Most of the paramaters will self-assign, and in many cases that is fine. The only
-    essential variable is the obspy stream 'st', but you will likely want to give thought
+    essential variable is the obspy stream ``st``, but you will likely want to give thought
     and care to the grid and velocity model.
 
     Parameters
@@ -1118,12 +1118,12 @@ class XCOR(object):
             Directory where model.npz file is place by obspy's taup program
             If not provided, it will default to within the enveloc module directory
     grid_size : dict, optional
-            A dict with keys 'lats', 'lons', and 'deps' each of which are 1D monotonic numpy arrays.
+            A dict with keys ``lats``, ``lons``, and ``deps`` each of which are 1D monotonic numpy arrays.
             If unprovided, this will be created internally based on the extent of the input stations.
-    detrend : boolean, optional
-            True/False to force a demean on obspy stream `st` or not.
+    detrend : bool, optional
+            True/False to force a demean on obspy stream ``st`` or not.
             Default = `True`
-    regrid : boolean, optional
+    regrid : bool, optional
             Whether to reinterpolate location on finer grid.
             Default = `True`
     phase_types : list, optional
@@ -1141,10 +1141,10 @@ class XCOR(object):
     normType : int, optional
             Integer 1 or 2 to use an L1 or L2 norm.
             Default = 1
-    plot : boolean, optional
+    plot : bool, optional
             Boolean flag to plot or not.
             Default = `True`
-    interact : boolean, optional
+    interact : bool, optional
             Boolean flag to interact with plot or not.
             Default = `True`
     output : int, optional
@@ -1166,7 +1166,7 @@ class XCOR(object):
             at the same station.
             Default = 0.1
     bootstrap : int, optional
-            Number of iterations for each location. For each iteration, 'bootstrap_prct'
+            Number of iterations for each location. For each iteration, ``bootstrap_prct``
             of the CC values will be zeroed out, and the resulting station contributions
             are adjusted accordingly to obtain a new location. These iterated locations
             provide a measure of location scatter, which is recorded in the location object.
@@ -1185,14 +1185,16 @@ class XCOR(object):
             'quadratic', 'cubic'). See scipy.interpolate.interp1d for details.
             Default='cubic'
     rotation : dict, optinal
-            Dictionary defining desired rotated grid. Needs keys 'x' (x grid nodes),
-            'y' (y grid nodes), 'z' (depth grid nodes), 'lat0' & 'lon0' (origin lat/lon),
-            'az', rotation azimuth (counterclockwise from East)
-            Default = `None`
+            Dictionary defining desired rotated grid. Needs keys ``x`` (x grid nodes),
+            ``y`` (y grid nodes), ``z`` (depth grid nodes), ``lat0`` & ``lon0`` (origin lat/lon),
+            ``az``, rotation azimuth (counterclockwise from East)
+            Default = ``None``
     dTmax_s : float, optional
-            Maximum cross-correlation shift in seconds. Defaults to the smaller of:
-                    a) 1/2 of the obspy stream window length
-                    b) the maximum predicted inter-station differential time + `dt`
+            Maximum cross-correlation shift in seconds. Defaults to the smaller of
+
+            a) 1/2 of the obspy stream window length
+
+            b) the maximum predicted inter-station differential time + `dt`
     dt : float, optional
             Seconds of additional allowed cross-correlation shifts beyond the maximumpredicted
             interchannel differential time.
@@ -1203,13 +1205,13 @@ class XCOR(object):
             displacement will be calculated.
             Default = `None`
     raw_traces : stream, optional
-            Obpsy stream of non-envelope traces matching the input `st` variable. Used to
+            Obpsy stream of non-envelope traces matching the input ``st`` variable. Used to
             calculate reduced displacement.
             Default = `[]`
     env_hp : stream, optional
-            Obspy stream of second envelopes with traces matchin the input `st` variable.
-            This would typically be envelopes generated in a different passband than `st`.
-            If a location is obtained for st, it will also check env_hp and set a flag.
+            Obspy stream of second envelopes with traces matchin the input ``st`` variable.
+            This would typically be envelopes generated in a different passband than ``st``.
+            If a location is obtained for ``st``, it will also check env_hp and set a flag.
             This can be useful for weeding out earthquake detections or correlated noise
             spikes when you are only interested in detecting a band-limited signal. It
             essentially gives you a way to flag windows where you have coherent energy in
@@ -1222,13 +1224,13 @@ class XCOR(object):
             Default = 0.03
     num_processors : int, optional
             Number of processors to use if you are iterating through sliding windows to
-            get locations. This can also be set in the `locate()` method.
+            get locations. This can also be set in the :meth:`locate()` method.
             Default = 1.
     tt_file : str, optional
             Path to a .npz file containing pre-calculated traveltimes for this station set
-            on this grid. Calulated using `save_traveltimes()` method.
+            on this grid. Calulated using :meth:`save_traveltimes()` method.
             Default = `None`
-    waveform_loc : boolean, optional
+    waveform_loc : bool, optional
             Boolean flag to optionally locate waveforms rather than envelopes.
             This flag exists to bypass some of the built in envelope quailty control
             Default = `False`
@@ -1436,7 +1438,7 @@ class XCOR(object):
 
     def calculate_traveltimes(self):
         """
-        Calculate travel times based on the model and grid provided in the `XCOR` object
+        Calculate travel times based on the model and grid provided in the :class:`XCOR` object
 
         """
 
@@ -1583,8 +1585,8 @@ class XCOR(object):
     def save_traveltimes(self, outfile):
         """
         Save an .npz file containing the model and grid. The variables should be created
-        using the `calculate_traveltimes()` method, which is called internally  when initiating
-        an XCOR object with a model and grid.
+        using the :meth:`calculate_traveltimes()` method, which is called internally  when initiating
+        an :class:`XCOR` object with a model and grid.
 
         Parameters
         ----------
@@ -1641,7 +1643,7 @@ class XCOR(object):
         """
         Load an .npz file containing a model and grid, and assign the appropriate times
         to each trace in the object. The .npz file can be created initially using the
-        `save_traveltimes()` method after `XCOR` has run `calculate_traveltimes()` with a model and grid.
+        :meth:`save_traveltimes()` method after :class:`XCOR` has run :meth:`calculate_traveltimes()` with a model and grid.
 
         Parameters
         ----------
@@ -1689,17 +1691,20 @@ class XCOR(object):
     ):
         """
         Main method to locate data provided. This method is actually a wrapper to call main envelope
-        cross correlation location algorithm `XC_locate`.
+        cross correlation location algorithm :meth:`XC_locate()`.
 
-        If using this to locate a single window of data, simply call locate() with no input parameters.
+        If using this to locate a single window of data, simply call :meth:`locate()` with no input parameters.
         All of the relevant details (plot, interact, map_resolution) are properties set in the initial
         object creation.
 
         If using this to iterate over a list of user-provided windows, the following parameter must be set:
 
+
         Parameters
         ----------
-        window_list : list containting 2x tuples of start and end times (Obspy UTCDatetime format)
+        window_list : list, optional
+                list containting 2x tuples of start and end times (Obspy UTCDatetime format) generated externally
+
 
         If using this to create and iterate over windows internally, the following parameters must be set:
 
@@ -1719,18 +1724,20 @@ class XCOR(object):
         ----------
         offset : float, optional
                 The offset of the first window in seconds relative to the start time of the whole interval.
-                Default = `False`
-        include_partial_windows : boolean, optional
+                Default = 0
+        include_partial_windows : bool, optional
                 Determines if sub-windows that are shorter then 99.9 % of the desired length are returned.
                 Default = `False`
-        nearest_sample : boolean, optional
+        nearest_sample : bool, optional
                 If set to True, the closest sample is selected, if set to False, the inner (next sample for a
                 start time border, previous sample for an end time border) sample containing the time is selected.
                 Default = `True`
         dTmax_s : float, optional
-                Maximum cross-correlation shift in seconds. Defaults to the smaller of:
-                        a) 1/2 of the obspy stream sub-window length
-                        b) the maximum predicted inter-station differential time + 'dt', set during initial object creation
+                Maximum cross-correlation shift in seconds. Defaults to the smaller of
+
+                a) 1/2 of the obspy stream sub-window length
+
+                b) the maximum predicted inter-station differential time + 'dt', set during initial object creation
         num_processors : int, optional
                 Number of processors to use in parallel
                 Default = `None`

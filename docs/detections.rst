@@ -1,7 +1,7 @@
-.. _detection:
+.. _detections class:
 
-*detections* object
--------------------
+detections object
+=================
 
 .. automodule:: enveloc.core
     :members: detections

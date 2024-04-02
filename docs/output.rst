@@ -6,7 +6,7 @@ Output
 Single location
 ---------------
 
-The location *loc* of a single window of data (e.g. :ref:`here<locate a signal>`) is output as a location object, :class:`core.location`, which has attributes:
+The location *loc* of a single window of data (e.g. :ref:`here<locate a signal>`) is output as a location object, :class:`~enveloc.core.location`, which has attributes:
 
  * latitude
  * longitude
@@ -18,16 +18,16 @@ The location *loc* of a single window of data (e.g. :ref:`here<locate a signal>`
  * channels
  * reduced_displacement (optional...and not well tested)
 
- Each of these values are set to *None* , *[]*, or *np.nan* if no location was determined (too few stations correlating, location on grid edge, data quality issues, etc.).
+ Each of these values are set to ``None`` , ``[]``, or ``np.nan`` if no location was determined (too few stations correlating, location on grid edge, data quality issues, etc.).
 
- *channels* is a list of tuples (*channel, sta_lon, sta_lat*) that actually participated in the location, and *loc.station_latlons()* will return a list of channel names and numpy arrays of channel latitudes and longitudes.
+ :py:attr:`channels` is a list of tuples, each containing :py:attr:`(channel, sta_lon, sta_lat)`, that actually participated in the location, and :py:meth:`loc.station_latlons()` will return a list of channel names and numpy arrays of channel latitudes and longitudes.
 
 
 .. _multiple locations:
 
 Multiple locations
 ------------------
-If you used *enveloc* to locate many windows (e.g. :ref:`here<parallel processing>`), the output *locs* will be an :class:`core.event_list` object, whose sole attribute is *events*, where *locs.events* is a list of :ref:`location objects<single location>` (:class:`core.location`). These can be accessed
+If you used *enveloc* to locate many windows (e.g. :ref:`here<parallel processing>`), the output ``locs`` will be an :class:`~enveloc.core.event_list` object :class:`~enveloc.core.XCOR`, whose sole attribute is *events*, where *locs.events* is a list of :ref:`location objects<single location>` [:class:`~enveloc.core.location`, :class:`~enveloc.core.location`,...]. These can be accessed
 by either:
 
 .. code-block:: python
@@ -56,7 +56,7 @@ where
 	channels=[('PB.B003..EHZ', -124.140862, 48.062359), ('PB.B013..EHZ', -122.910797, 47.813), ('PB.B014..EHZ', -123.8125, 47.513302), ('UW.STOR..HHZ', -121.9888, 47.188099)]
 	reduced_displacement=None)
 
-The :class:`core.event_list` object has several methods to manipulate this list of locations. Among these is the ability to remove locations with too much scatter or *null* result, :meth:`event_list.remove`
+The :class:`~enveloc.core.event_list` :ref:`object<event_list class>` has several methods to manipulate this list of locations. Among these is the ability to remove locations with too much scatter or *null* result, :meth:`event_list.remove`
 
 .. code-block:: python
 
@@ -106,7 +106,7 @@ For some seismic sources, like tectonic tremor or earthquake swarms, it can be u
 	edge_clustered: 7 events
 	noise: 73 events)
 
-The clustering uses :meth:`sklearn.cluster.DBSCAN` (|documentation| and |demo|) and outputs a :ref:`detection` which contains different :class:`event_list` objects 
+The clustering uses :meth:`sklearn.cluster.DBSCAN` (|documentation| and |demo|) and outputs a :ref:`detections class` which contains different :class:`event_list` objects 
 as attributes:
 
 .. |documentation| raw:: html
