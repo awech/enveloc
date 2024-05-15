@@ -29,4 +29,4 @@ Test install with:<br>
 
 ### Documentation
 
-Go [here](https://enveloc.readthedocs.io/) for more information<br>
+Go [here](https://enveloc.readthedocs.io/) for more information.<br>
