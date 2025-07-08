@@ -51,7 +51,7 @@ def checkvalue(value):
     if isinstance(value, float) | isinstance(value, int):
         pass
     else:
-        value = np.NaN
+        value = np.nan
     return value
 
 
