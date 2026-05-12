@@ -24,7 +24,7 @@ copyright = "2020, Aaron Wech"
 author = "Aaron Wech"
 
 # The full version, including alpha/beta/rc tags
-release = "1.1.5"
+release = "1.1.6"
 
 
 # -- General configuration ---------------------------------------------------
