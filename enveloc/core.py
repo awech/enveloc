@@ -277,19 +277,19 @@ def XC_locate(win, XC):
             edge_check = False
             if XC.rotation:
                 if (
-                    np.in1d(tmp_lat, XC._grid["LAT"][0, :, 0])[0]
-                    or np.in1d(tmp_lat, XC._grid["LAT"][-1, :, 0])[0]
+                    np.isin(tmp_lat, XC._grid["LAT"][0, :, 0])[0]
+                    or np.isin(tmp_lat, XC._grid["LAT"][-1, :, 0])[0]
                 ):
                     edge_check = True
                 if (
-                    np.in1d(tmp_lat, XC._grid["LON"][0, :, 0])[0]
-                    or np.in1d(tmp_lat, XC._grid["LON"][-1, :, 0])[0]
+                    np.isin(tmp_lat, XC._grid["LON"][0, :, 0])[0]
+                    or np.isin(tmp_lat, XC._grid["LON"][-1, :, 0])[0]
                 ):
                     edge_check = True
             else:
                 if (
-                    np.in1d(tmp_lat, XC.grid_size["lats"].take([0, -1]))[0]
-                    or np.in1d(tmp_lon, XC.grid_size["lons"].take([0, -1]))[0]
+                    np.isin(tmp_lat, XC.grid_size["lats"].take([0, -1]))[0]
+                    or np.isin(tmp_lon, XC.grid_size["lons"].take([0, -1]))[0]
                 ):
                     edge_check = True
             if edge_check:

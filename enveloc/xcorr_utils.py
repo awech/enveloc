@@ -115,7 +115,7 @@ def trim_CC(drop_key, Nprev, Nseis0, C, maxC, LAG, ii, indx):
         lag[comb[0]][comb[1]] = LAG[key[comb[0]]][key[comb[1]]]
         lag[comb[1]][comb[0]] = LAG[key[comb[1]]][key[comb[0]]]
 
-    (ind_indx,) = np.where(np.in1d(indx[2], keep_indx))
+    (ind_indx,) = np.where(np.isin(indx[2], keep_indx))
     C = C.T[ind_indx].T
     indx = INDX
     maxC = maxc
