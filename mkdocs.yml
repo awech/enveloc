@@ -1,0 +1,79 @@
+site_name: enveloc
+site_description: enveloc - envelope cross-correlation location method
+site_author: Aaron Wech
+repo_url: https://github.com/awech/enveloc
+repo_name: awech/enveloc
+copyright: Copyright &copy; 2020 Aaron Wech
+
+docs_dir: docs
+
+theme:
+  name: material
+  features:
+    - navigation.sections
+    - navigation.top
+    - content.code.copy
+    - toc.follow
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: teal
+      accent: teal
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: teal
+      accent: teal
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+
+nav:
+  - Home: index.md
+  - Introduction: intro.md
+  - Installation: installation.md
+  - Usage overview: setup.md
+  - Tutorial: tutorial.md
+  - Output: output.md
+  - API Reference:
+      - XCOR object: xcor.md
+      - event_list object: event_list.md
+      - detections object: detections.md
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [.]
+          options:
+            docstring_style: numpy
+            docstring_section_style: table
+            members_order: source
+            show_source: true
+            show_root_heading: true
+            show_if_no_docstring: false
+            separate_signature: true
+            merge_init_into_class: true
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - footnotes
+  - toc:
+      permalink: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.details
+  - pymdownx.arithmatex:
+      generic: true
+
+extra_javascript:
+  - javascripts/mathjax.js
+  - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js

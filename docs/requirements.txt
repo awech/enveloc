@@ -1,5 +1,0 @@
-obspy
-cartopy
-scikit-learn
-utm
-sphinx_rtd_theme 
