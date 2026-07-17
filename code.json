@@ -3,7 +3,7 @@
         "name": "enveloc",
         "organization": "U.S. Geological Survey",
         "description": "Tool for processing infrasound array data & displaying results",
-        // "version": "1.1.0",
+        "version": "1.1.7",
         "status": "Archival",
         "permissions": {
             "usageType": "openSource",
@@ -15,8 +15,8 @@
             ]
         },
         "homepageURL": "https://code.usgs.gov/vsc/seis/tools/enveloc",
-        // "downloadURL": "https://code.usgs.gov/vsc/seis/tools/enveloc/-/archive/1.0.0/enveloc-1.0.0.zip",
-        // "disclaimerURL": "https://code.usgs.gov/vsc/seis/tools/enveloc/-/raw/1.0.0/DISCLAIMER.md",
+        "downloadURL": "https://code.usgs.gov/vsc/seis/tools/enveloc/-/archive/1.0.0/enveloc-1.0.0.zip",
+        "disclaimerURL": "https://code.usgs.gov/vsc/seis/tools/enveloc/-/raw/1.0.0/DISCLAIMER.md",
         "repositoryURL": "https://code.usgs.gov/vsc/seis/tools/enveloc.git",
         "vcs": "git",
         "laborHours": 0,
@@ -33,7 +33,7 @@
             "email": "awech@usgs.gov"
         },
         "date": {
-            // "metadataLastUpdated": "2025-11-21"
+            "metadataLastUpdated": "2025-11-21"
         }
     }
 ]

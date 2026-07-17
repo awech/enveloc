@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "enveloc"
-version = ["version"]
+dynamic = ["version"]
 description = "enveloc - envelope cross-correlation location method"
 readme = "README.md"
 requires-python = ">=3.8"
@@ -28,10 +28,20 @@ dependencies = [
     "utm",
 ]
 
+[project.optional-dependencies]
+docs = [
+    "mkdocs",
+    "mkdocs-material",
+    "mkdocstrings[python]",
+]
+
 [project.urls]
 Homepage = "https://github.com/awech/enveloc"
 Download = "https://github.com/awech/enveloc/archive/v1.1.7.tar.gz"
 Documentation = "https://enveloc.readthedocs.io/en/latest/index.html"
+
+[tool.hatch.version]
+path = "enveloc/__init__.py"
 
 [tool.hatch.build.targets.wheel]
 packages = ["enveloc"]
