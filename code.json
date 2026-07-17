@@ -1,0 +1,39 @@
+[
+    {
+        "name": "enveloc",
+        "organization": "U.S. Geological Survey",
+        "description": "Tool for processing infrasound array data & displaying results",
+        // "version": "1.1.0",
+        "status": "Archival",
+        "permissions": {
+            "usageType": "openSource",
+            "licenses": [
+                {
+                    "name": "Public Domain, CC0-1.0",
+                    "URL": "https://code.usgs.gov/vsc/seis/tools/enveloc/-/raw/1.0.0/LICENSE.md"
+                }
+            ]
+        },
+        "homepageURL": "https://code.usgs.gov/vsc/seis/tools/enveloc",
+        // "downloadURL": "https://code.usgs.gov/vsc/seis/tools/enveloc/-/archive/1.0.0/enveloc-1.0.0.zip",
+        // "disclaimerURL": "https://code.usgs.gov/vsc/seis/tools/enveloc/-/raw/1.0.0/DISCLAIMER.md",
+        "repositoryURL": "https://code.usgs.gov/vsc/seis/tools/enveloc.git",
+        "vcs": "git",
+        "laborHours": 0,
+        "tags": [
+            "volcanoes",
+            "tremor",
+            "seismology"
+        ],
+        "languages": [
+            "Python"
+        ],
+        "contact": {
+            "name": "Aaron Wech",
+            "email": "awech@usgs.gov"
+        },
+        "date": {
+            // "metadataLastUpdated": "2025-11-21"
+        }
+    }
+]
